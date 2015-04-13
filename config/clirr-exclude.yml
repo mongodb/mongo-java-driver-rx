@@ -1,0 +1,10 @@
+---
+differenceTypes:
+- 10000 # (Class format version increased): className, from, to (class format version numbers, NOT expressions)
+- 8000  # (Class added): className
+- 7011  # (Method Added): className, method
+- 6006  # (field now final): className, field
+
+packages:
+- org.mongodb
+

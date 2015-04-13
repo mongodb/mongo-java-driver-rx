@@ -1,0 +1,17 @@
+<FindBugsFilter>
+
+    <!-- Spock tests seem to fail the serial version ID test when stubbing.  Annoying. -->
+    <Match>
+        <Class name="~.*\.*Specification.*"/>
+        <Bug pattern="SE_NO_SERIALVERSIONID,LI_LAZY_INIT_STATIC"/>
+    </Match>
+
+    <!-- All bugs in test classes, except for JUnit-specific bugs -->
+    <Match>
+        <Class name="~.*\.*Test"/>
+        <Not>
+            <Bug code="IJU"/>
+        </Not>
+    </Match>
+
+</FindBugsFilter>
