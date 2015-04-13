@@ -1,0 +1,6 @@
+baseurl = "/mongo-java-driver-rx/"
+languageCode = "en-us"
+title = "MongoDB Java Driver"
+canonifyurls = false
+
+githubRepo = "mongo-java-driver-rx"
