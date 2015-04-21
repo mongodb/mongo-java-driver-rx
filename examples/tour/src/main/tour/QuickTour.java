@@ -28,7 +28,6 @@ import com.mongodb.rx.client.MongoCollection;
 import com.mongodb.rx.client.MongoDatabase;
 import com.mongodb.rx.client.Success;
 import org.bson.Document;
-import rx.Subscriber;
 import rx.observers.TestSubscriber;
 
 import java.util.ArrayList;
