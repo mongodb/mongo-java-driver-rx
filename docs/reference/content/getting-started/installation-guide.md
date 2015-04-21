@@ -18,4 +18,4 @@ The recommended way to get started using one of the drivers in your project is w
 An implementation of the MongoDB Driver providing support for [ReactiveX (Reactive Extensions)](http://reactivex.io/)
  by using the [RxJava library](https://github.com/ReactiveX/RxJava).
 
-{{< install artifactId="mongodb-driver-rx" version="1.0.0-rc0" mongoDriverVersion="3.0.0" rxJavaVersion="1.0.8">}}
+{{< install artifactId="mongodb-driver-rx" version="1.0.0-beta1" mongoDriverVersion="3.0.0" rxJavaVersion="1.0.8">}}
