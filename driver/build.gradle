@@ -28,3 +28,11 @@ task uberJar(type: Jar) {
     classifier = 'all'
     from sourceSets.main.output
 }
+
+modifyPom {
+    project {
+        name 'MongoDB RX Driver'
+        description 'The MongoDB RX Driver'
+        url 'http://www.mongodb.org'
+    }
+}
