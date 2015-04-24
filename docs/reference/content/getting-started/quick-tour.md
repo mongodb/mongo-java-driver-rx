@@ -52,8 +52,8 @@ At this point, the `database` object will be a connection to a MongoDB
 server for the specified database.
 
 {{% note %}}
-The API only returns `Observable<T>` or `MongoObservable<T>` when network IO required for the operation. For 
-`getDatabase("mydb")` there is no network IO required.
+The API only returns `Observable<T>` or `MongoObservable<T>` when network I/O is required for the operation. For 
+`getDatabase("mydb")` there is no network I/O required.
 A `MongoDatabase` instance provides methods to interact with a database
 but the database might not actually exist and will only be created on the
 insertion of data via some means; e.g. the creation of a collection or the insertion of documents.
@@ -105,9 +105,8 @@ contains a field `info` which is an embedded document:
 }
 ```
 
-To create the document using the Java driver, use the
-[Document]({{< apiref "org/bson/Document.html">}}) class. You
-can use this class to create the embedded document as well.
+To create the document, use the [Document]({{< apiref "org/bson/Document.html">}}) class. You can use this class to create the embedded 
+document as well. 
 
 ```java
 Document doc = new Document("name", "MongoDB")
@@ -209,9 +208,7 @@ method to query the collection.
 
 ### Find the First Document in a Collection
 
-call the first() method on the result of the find() of method
-
-To get the first document in the collection, call the
+To get the first matching document in the collection, call the
 [first()]({{< apiref "com/mongodb/reactivestreams/client/MongoIterable.html#first--">}})
 method on the [find()]({{< apiref "com/mongodb/reactivestreams/client/MongoCollection.html#find--">}})
 operation. `collection.find().first()` returns the first document or if no document is found the `Observable` just completes.
@@ -265,7 +262,7 @@ import static com.mongodb.client.model.Filters.*;
 collection.find(eq("i", 71)).first().subscribe(printDocumentSubscriber());
 ```
 
-will eventually print just one document:
+will print just one document:
 
 ```json
 { "_id" : { "$oid" : "5515836e58c7b4fbc756320b" }, "i" : 71 }
