@@ -119,8 +119,13 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
     }
 
     @Override
-    public <TResult> DistinctObservable<TResult> distinct(final String fieldName, final Class<TResult> clazz) {
-        return new DistinctObservableImpl<TResult>(wrapped.distinct(fieldName, clazz));
+    public <TResult> DistinctObservable<TResult> distinct(final String fieldName, final Class<TResult> resultClass) {
+        return distinct(fieldName, new BsonDocument(), resultClass);
+    }
+
+    @Override
+    public <TResult> DistinctObservable<TResult> distinct(final String fieldName, final Bson filter, final Class<TResult> resultClass) {
+        return new DistinctObservableImpl<TResult>(wrapped.distinct(fieldName, resultClass)).filter(filter);
     }
 
     @Override

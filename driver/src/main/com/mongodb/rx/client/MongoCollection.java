@@ -148,13 +148,25 @@ public interface MongoCollection<TDocument> {
     /**
      * Gets the distinct values of the specified field name.
      *
-     * @param fieldName the field name
-     * @param clazz     the default class to cast any distinct items into.
-     * @param <TResult> the target type of the iterable.
+     * @param fieldName   the field name
+     * @param resultClass the default class to cast any distinct items into.
+     * @param <TResult>   the target type of the iterable.
      * @return an Observable emitting the sequence of distinct values
      * @mongodb.driver.manual reference/command/distinct/ Distinct
      */
-    <TResult> DistinctObservable<TResult> distinct(String fieldName, Class<TResult> clazz);
+    <TResult> DistinctObservable<TResult> distinct(String fieldName, Class<TResult> resultClass);
+
+    /**
+     * Gets the distinct values of the specified field name.
+     *
+     * @param fieldName   the field name
+     * @param filter      the query filter
+     * @param resultClass the default class to cast any distinct items into.
+     * @param <TResult>   the target type of the iterable.
+     * @return an iterable of distinct values
+     * @mongodb.driver.manual reference/command/distinct/ Distinct
+     */
+    <TResult> DistinctObservable<TResult> distinct(String fieldName, Bson filter, Class<TResult> resultClass);
 
     /**
      * Finds all documents in the collection.
