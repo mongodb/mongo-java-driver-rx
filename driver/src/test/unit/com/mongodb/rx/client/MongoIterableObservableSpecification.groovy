@@ -150,9 +150,8 @@ class MongoIterableObservableSpecification extends Specification {
         def cursor = {
             Stub(AsyncBatchCursor) {
                 next(_) >> {
-                    it[0].onResult(cursorResults.remove(0), null)
+                    it[0].onResult(cursorResults.isEmpty() ? null : cursorResults.remove(0), null)
                 }
-                isClosed() >> { cursorResults.isEmpty() }
             }
         }
         def subscriber = new TestSubscriber()
@@ -184,6 +183,72 @@ class MongoIterableObservableSpecification extends Specification {
 
         then:
         subscriber.assertReceivedOnNext(cannedResults)
+        subscriber.assertTerminalEvent()
+    }
+
+    def 'should throw if n < 0'() {
+        given:
+        def subscriber = new TestSubscriber()
+        MongoIterableObservable.create(Stub(MongoIterable)).subscribe(subscriber)
+
+        when:
+        subscriber.requestMore(-10)
+
+        then:
+        thrown(IllegalArgumentException)
+    }
+
+    def 'an onError event should be terminal and calling request after should not produce any other events'() {
+        given:
+        def subscriber = new TestSubscriber()
+        def mongoIterable = Stub(MongoIterable) {
+            batchCursor(_) >> { args -> args[0].onResult(new MongoException('cursor failed'), null) }
+        }
+
+        when:
+        subscriber.requestMore(10)  // Request first batch
+        MongoIterableObservable.create(mongoIterable).subscribe(subscriber)
+
+        then:
+        subscriber.assertTerminalEvent()
+        subscriber.assertUnsubscribed()
+
+        when:
+        subscriber.requestMore(10)
+
+        then:
+        subscriber.assertTerminalEvent()
+    }
+
+    def 'an onCompleted event should be terminal and calling request after should not produce any other events'() {
+        given:
+        def cannedResults = (1..10).collect({ new Document('_id', it) })
+        def cursorResults = [cannedResults, null]
+        def cursor = {
+            Stub(AsyncBatchCursor) {
+                next(_) >> {
+                    it[0].onResult(cursorResults.isEmpty() ? null : cursorResults.remove(0), null)
+                }
+            }
+        }
+        def subscriber = new TestSubscriber()
+        def mongoIterable = Stub(MongoIterable) {
+            batchCursor(_) >> { args -> args[0].onResult(cursor(), null) }
+        }
+
+        when:
+        subscriber.requestMore(11)  // Request first batch
+        MongoIterableObservable.create(mongoIterable).subscribe(subscriber)
+
+        then:
+        subscriber.assertReceivedOnNext(cannedResults)
+        subscriber.assertTerminalEvent()
+        subscriber.assertUnsubscribed()
+
+        when:
+        subscriber.requestMore(10)
+
+        then:
         subscriber.assertTerminalEvent()
     }
 
