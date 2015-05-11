@@ -62,6 +62,8 @@ class ListDatabasesObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
+        subscriber = new TestSubscriber()
+        subscriber.requestMore(100)
         listDatabasesObservable.maxTime(999, MILLISECONDS).subscribe(subscriber)
 
         operation = executor.getReadOperation() as ListDatabasesOperation<Document>

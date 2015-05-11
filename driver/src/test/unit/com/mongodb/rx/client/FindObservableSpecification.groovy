@@ -97,6 +97,8 @@ class FindObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
+        subscriber = new TestSubscriber()
+        subscriber.requestMore(100)
         findObservable.filter(new Document('filter', 2))
                 .sort(new Document('sort', 2))
                 .modifiers(new Document('modifier', 2))

@@ -16,6 +16,7 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.async.client.Observables;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -41,7 +42,7 @@ final class ListIndexesObservableImpl<TResult> implements ListIndexesObservable<
 
     @Override
     public Observable<TResult> toObservable() {
-        return MongoIterableObservable.create(wrapped);
+        return RxObservables.create(Observables.observe(wrapped));
     }
 
     @Override

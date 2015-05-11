@@ -16,8 +16,10 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.Block;
 import com.mongodb.CursorType;
 import com.mongodb.async.SingleResultCallback;
+import com.mongodb.async.client.Observables;
 import org.bson.conversions.Bson;
 import rx.Observable;
 import rx.Subscriber;
@@ -37,12 +39,12 @@ class FindObservableImpl<TResult> implements FindObservable<TResult> {
 
     @Override
     public Observable<TResult> first() {
-        return Observable.create(new SingleResultOnSubscribeAdapter<TResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<TResult>>() {
             @Override
-            void execute(final SingleResultCallback<TResult> callback) {
+            public void apply(final SingleResultCallback<TResult> callback) {
                 wrapped.first(callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -113,7 +115,7 @@ class FindObservableImpl<TResult> implements FindObservable<TResult> {
 
     @Override
     public Observable<TResult> toObservable() {
-        return MongoIterableObservable.create(wrapped);
+        return RxObservables.create(Observables.observe(wrapped));
     }
 
     @Override

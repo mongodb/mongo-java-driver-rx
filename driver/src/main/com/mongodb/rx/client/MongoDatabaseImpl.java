@@ -16,9 +16,11 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.Block;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.async.SingleResultCallback;
+import com.mongodb.async.client.Observables;
 import com.mongodb.client.model.CreateCollectionOptions;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -93,38 +95,38 @@ class MongoDatabaseImpl implements MongoDatabase {
 
     @Override
     public <TResult> Observable<TResult> runCommand(final Bson command, final Class<TResult> clazz) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<TResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<TResult>>() {
             @Override
-            void execute(final SingleResultCallback<TResult> callback) {
+            public void apply(final SingleResultCallback<TResult> callback) {
                 wrapped.runCommand(command, clazz, callback);
             }
-        });
+        }));
     }
 
     @Override
     public <TResult> Observable<TResult> runCommand(final Bson command, final ReadPreference readPreference,
                                                        final Class<TResult> clazz) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<TResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<TResult>>() {
             @Override
-            void execute(final SingleResultCallback<TResult> callback) {
+            public void apply(final SingleResultCallback<TResult> callback) {
                 wrapped.runCommand(command, readPreference, clazz, callback);
             }
-        });
+        }));
     }
 
     @Override
     public Observable<Success> drop() {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.drop(voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 
     @Override
     public Observable<String> listCollectionNames() {
-        return MongoIterableObservable.create(wrapped.listCollectionNames());
+        return RxObservables.create(Observables.observe(wrapped.listCollectionNames()));
     }
 
     @Override
@@ -144,11 +146,11 @@ class MongoDatabaseImpl implements MongoDatabase {
 
     @Override
     public Observable<Success> createCollection(final String collectionName, final CreateCollectionOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.createCollection(collectionName, options, voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 }

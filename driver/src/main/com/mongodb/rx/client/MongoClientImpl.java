@@ -17,6 +17,7 @@
 package com.mongodb.rx.client;
 
 import com.mongodb.async.client.MongoClientSettings;
+import com.mongodb.async.client.Observables;
 import org.bson.Document;
 import rx.Observable;
 
@@ -46,7 +47,7 @@ class MongoClientImpl implements MongoClient {
 
     @Override
     public Observable<String> listDatabaseNames() {
-        return MongoIterableObservable.create(wrapped.listDatabaseNames());
+        return RxObservables.create(Observables.observe(wrapped.listDatabaseNames()));
     }
 
     @Override

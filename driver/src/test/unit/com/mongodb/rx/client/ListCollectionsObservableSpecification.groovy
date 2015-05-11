@@ -64,6 +64,8 @@ class ListCollectionsObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
+        subscriber = new TestSubscriber()
+        subscriber.requestMore(100)
         listCollectionObservable.filter(new Document('filter', 2)).maxTime(999, MILLISECONDS).subscribe(subscriber)
 
         operation = executor.getReadOperation() as ListCollectionsOperation<Document>

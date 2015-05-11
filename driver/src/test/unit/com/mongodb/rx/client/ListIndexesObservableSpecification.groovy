@@ -66,6 +66,8 @@ class ListIndexesObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
+        subscriber = new TestSubscriber()
+        subscriber.requestMore(100)
         listIndexesObservable
                 .maxTime(999, MILLISECONDS)
                 .subscribe(subscriber)

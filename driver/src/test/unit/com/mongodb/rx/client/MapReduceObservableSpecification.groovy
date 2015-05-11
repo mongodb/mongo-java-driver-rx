@@ -77,6 +77,8 @@ class MapReduceObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
+        subscriber = new TestSubscriber()
+        subscriber.requestMore(100)
         mapReduceObservable.filter(new Document('filter', 1))
                 .finalizeFunction('finalize')
                 .limit(999)
@@ -154,7 +156,7 @@ class MapReduceObservableSpecification extends Specification {
         operation.getBatchSize() == 100 // set by subscriber.request
 
         when: 'toCollection should work as expected'
-        mapReduceObservable.toCollection().subscribe(subscriber)
+        mapReduceObservable.toCollection().subscribe(new TestSubscriber<Success>())
         operation = executor.getWriteOperation() as MapReduceToCollectionOperation
 
         then:

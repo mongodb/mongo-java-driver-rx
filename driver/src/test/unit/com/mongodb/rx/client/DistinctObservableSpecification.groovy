@@ -60,7 +60,7 @@ class DistinctObservableSpecification extends Specification {
         subscriber.requestMore(100)
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new DistinctIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                executor, 'field')
+                executor, 'field', new BsonDocument())
         def distinctObservable = new DistinctObservableImpl(wrapped)
 
         when: 'default input should be as expected'
@@ -70,10 +70,12 @@ class DistinctObservableSpecification extends Specification {
         def readPreference = executor.getReadPreference()
 
         then:
-        expect operation, isTheSameAs(new DistinctOperation<Document>(namespace, 'field', new DocumentCodec()));
+        expect operation, isTheSameAs(new DistinctOperation<Document>(namespace, 'field', new DocumentCodec()).filter(new BsonDocument()));
         readPreference == secondary()
 
         when: 'overriding initial options'
+        subscriber = new TestSubscriber()
+        subscriber.requestMore(100)
         distinctObservable.filter(new Document('field', 1)).maxTime(999, MILLISECONDS).subscribe(subscriber)
 
         operation = executor.getReadOperation() as DistinctOperation<Document>

@@ -16,6 +16,7 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.async.client.Observables;
 import org.bson.conversions.Bson;
 import rx.Observable;
 import rx.Subscriber;
@@ -48,7 +49,7 @@ class DistinctObservableImpl<TResult> implements DistinctObservable<TResult> {
 
     @Override
     public Observable<TResult> toObservable() {
-        return MongoIterableObservable.create(wrapped);
+        return RxObservables.create(Observables.observe(wrapped));
     }
 
     @Override

@@ -75,8 +75,9 @@ class AggregateObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
+        subscriber = new TestSubscriber()
+        subscriber.requestMore(100)
         aggregateObservable.maxTime(999, MILLISECONDS).useCursor(true).subscribe(subscriber)
-
         operation = executor.getReadOperation() as AggregateOperation<Document>
 
         then: 'should use the overrides'
@@ -122,7 +123,7 @@ class AggregateObservableSpecification extends Specification {
         when: 'toCollection should work as expected'
         wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
                 executor, pipeline)
-        new AggregateObservableImpl<Document>(wrapped).toCollection().subscribe(subscriber)
+        new AggregateObservableImpl<Document>(wrapped).toCollection().subscribe(new TestSubscriber())
         operation = executor.getWriteOperation() as AggregateToCollectionOperation
 
         then:

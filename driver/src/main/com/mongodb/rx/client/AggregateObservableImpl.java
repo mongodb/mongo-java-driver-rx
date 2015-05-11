@@ -16,7 +16,9 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.Block;
 import com.mongodb.async.SingleResultCallback;
+import com.mongodb.async.client.Observables;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -55,17 +57,17 @@ class AggregateObservableImpl<TResult> implements AggregateObservable<TResult> {
 
     @Override
     public Observable<Success> toCollection() {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.toCollection(voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 
     @Override
     public Observable<TResult> toObservable() {
-        return MongoIterableObservable.create(wrapped);
+        return RxObservables.create(Observables.observe(wrapped));
     }
 
     @Override

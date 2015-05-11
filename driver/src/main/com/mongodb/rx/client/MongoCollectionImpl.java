@@ -16,10 +16,12 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.Block;
 import com.mongodb.MongoNamespace;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.async.SingleResultCallback;
+import com.mongodb.async.client.Observables;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.CountOptions;
@@ -110,12 +112,12 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<Long> count(final Bson filter, final CountOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Long>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Long>>() {
             @Override
-            void execute(final SingleResultCallback<Long> callback) {
+            public void apply(final SingleResultCallback<Long> callback) {
                 wrapped.count(filter, options, callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -177,22 +179,22 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
     @Override
     public Observable<BulkWriteResult> bulkWrite(final List<? extends WriteModel<? extends TDocument>> requests,
                                                 final BulkWriteOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<BulkWriteResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<BulkWriteResult>>() {
             @Override
-            void execute(final SingleResultCallback<BulkWriteResult> callback) {
+            public void apply(final SingleResultCallback<BulkWriteResult> callback) {
                 wrapped.bulkWrite(requests, options, callback);
             }
-        });
+        }));
     }
 
     @Override
     public Observable<Success> insertOne(final TDocument document) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.insertOne(document, voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 
     @Override
@@ -202,32 +204,32 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<Success> insertMany(final List<? extends TDocument> documents, final InsertManyOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.insertMany(documents, options, voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 
     @Override
     public Observable<DeleteResult> deleteOne(final Bson filter) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<DeleteResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<DeleteResult>>() {
             @Override
-            void execute(final SingleResultCallback<DeleteResult> callback) {
+            public void apply(final SingleResultCallback<DeleteResult> callback) {
                 wrapped.deleteOne(filter, callback);
             }
-        });
+        }));
     }
 
     @Override
     public Observable<DeleteResult> deleteMany(final Bson filter) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<DeleteResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<DeleteResult>>() {
             @Override
-            void execute(final SingleResultCallback<DeleteResult> callback) {
+            public void apply(final SingleResultCallback<DeleteResult> callback) {
                 wrapped.deleteMany(filter, callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -237,12 +239,12 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<UpdateResult> replaceOne(final Bson filter, final TDocument replacement, final UpdateOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<UpdateResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<UpdateResult>>() {
             @Override
-            void execute(final SingleResultCallback<UpdateResult> callback) {
+            public void apply(final SingleResultCallback<UpdateResult> callback) {
                 wrapped.replaceOne(filter, replacement, options, callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -252,12 +254,12 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<UpdateResult> updateOne(final Bson filter, final Bson update, final UpdateOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<UpdateResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<UpdateResult>>() {
             @Override
-            void execute(final SingleResultCallback<UpdateResult> callback) {
+            public void apply(final SingleResultCallback<UpdateResult> callback) {
                 wrapped.updateOne(filter, update, options, callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -267,12 +269,12 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<UpdateResult> updateMany(final Bson filter, final Bson update, final UpdateOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<UpdateResult>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<UpdateResult>>() {
             @Override
-            void execute(final SingleResultCallback<UpdateResult> callback) {
+            public void apply(final SingleResultCallback<UpdateResult> callback) {
                 wrapped.updateMany(filter, update, options, callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -282,12 +284,12 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<TDocument> findOneAndDelete(final Bson filter, final FindOneAndDeleteOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<TDocument>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<TDocument>>() {
             @Override
-            void execute(final SingleResultCallback<TDocument> callback) {
+            public void apply(final SingleResultCallback<TDocument> callback) {
                 wrapped.findOneAndDelete(filter, options, callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -297,12 +299,12 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<TDocument> findOneAndReplace(final Bson filter, final TDocument replacement, final FindOneAndReplaceOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<TDocument>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<TDocument>>() {
             @Override
-            void execute(final SingleResultCallback<TDocument> callback) {
+            public void apply(final SingleResultCallback<TDocument> callback) {
                 wrapped.findOneAndReplace(filter, replacement, options, callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -312,22 +314,22 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<TDocument> findOneAndUpdate(final Bson filter, final Bson update, final FindOneAndUpdateOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<TDocument>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<TDocument>>() {
             @Override
-            void execute(final SingleResultCallback<TDocument> callback) {
+            public void apply(final SingleResultCallback<TDocument> callback) {
                 wrapped.findOneAndUpdate(filter, update, options, callback);
             }
-        });
+        }));
     }
 
     @Override
     public Observable<Success> drop() {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.drop(voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 
     @Override
@@ -337,22 +339,22 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<String> createIndex(final Bson key, final IndexOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<String>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<String>>() {
             @Override
-            void execute(final SingleResultCallback<String> callback) {
+            public void apply(final SingleResultCallback<String> callback) {
                 wrapped.createIndex(key, options, callback);
             }
-        });
+        }));
     }
 
     @Override
     public Observable<String> createIndexes(final List<IndexModel> indexes) {
-        return Observable.create(new SingleResultListOnSubscribeAdapter<String>() {
+        return RxObservables.create(Observables.observeAndFlatten(new Block<SingleResultCallback<List<String>>>() {
             @Override
-            void execute(final SingleResultCallback<List<String>> callback) {
+            public void apply(final SingleResultCallback<List<String>> callback) {
                 wrapped.createIndexes(indexes, callback);
             }
-        });
+        }));
     }
 
     @Override
@@ -367,22 +369,22 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<Success> dropIndex(final String indexName) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.dropIndex(indexName, voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 
     @Override
     public Observable<Success> dropIndex(final Bson keys) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.dropIndex(keys, voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 
     @Override
@@ -397,12 +399,12 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 
     @Override
     public Observable<Success> renameCollection(final MongoNamespace newCollectionNamespace, final RenameCollectionOptions options) {
-        return Observable.create(new SingleResultOnSubscribeAdapter<Success>() {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override
-            void execute(final SingleResultCallback<Success> callback) {
+            public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.renameCollection(newCollectionNamespace, options, voidToSuccessCallback(callback));
             }
-        });
+        }));
     }
 
 }
