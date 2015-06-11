@@ -7,15 +7,17 @@
 <p>
   Alternatively, head over to our documentation to learn more about getting started with Java, RxJava, and MongoDB.
 </p>
-{{$githubRepo := $.Site.Data.releases.githubRepo}}
+
+
 {{ range where $.Site.Data.releases.versions "version" $.Site.Data.releases.current  }}{{ $.Scratch.Set "qs.currentReleasedVersion" . }}{{end }}
 {{$currentReleasedVersion := $.Scratch.Get "qs.currentReleasedVersion"}}
+
 <div id="downloadWidget">
   <div class="container">
     <div class="row downloadForm">
       <form>
         <div class="col-xs-5 col-lg-4 col-lg-push-2 ">
-        <h5>{{$githubRepo}}</h5>
+        <h5>mongodb-driver-reactivestreams</h5>
         </div>
     <div class="col-xs-5 col-lg-4 col-lg-push-2 ">
     {{ $.Scratch.Set "qs.pos" 0 }}
@@ -23,7 +25,7 @@
     {{ with $.Site.Data.releases.versions }}
       <select class="releasePicker">
         {{ range . }}
-        <option value="{{$.Scratch.Get "qs.pos"}}">{{.version}}</option>
+        <option value="{{$.Scratch.Get "qs.pos"}}" {{ if eq .status "current"}}selected{{end}}>{{.version}}</option>
         {{ $.Scratch.Add "qs.pos" 1 }}
         {{ end }}
       </select>
@@ -34,10 +36,11 @@
     </div>
   </form>
   <div class="hidden-md hidden-sm hidden-xs col-lg-2 col-lg-pull-10 downloadLink">
-  <a href="https://oss.sonatype.org/content/repositories/releases/org/mongodb/{{$githubRepo}}/{{$currentReleasedVersion.version}}/"
+      <a href="https://oss.sonatype.org/content/repositories/releases/org/mongodb/mongodb-driver-rx/{{$currentReleasedVersion.version}}/"
      id="downloadLink" class="btn btn-dark btn-download" target="_blank">Download</a>
   </div>
   </div>
+
 
   <div class="row">
   <div class="clipboard" title="copy">
@@ -52,7 +55,43 @@
       {{ $currentVersion := . }}
       {{ $firstDriver := $.Scratch.Get "qs.firstDriver"}}
       {{ $versionPos := $.Scratch.Get "qs.versionPos" }}
-<div id="maven-{{$versionPos}}" class="download{{ if eq $firstDriver false}} hidden{{end}}">
+{{ if in $currentVersion.version "SNAPSHOT" }}
+      <div id="maven-{{$versionPos}}" class="download{{if or (ne $firstDriver true) (ne $currentVersion.status "current") }} hidden{{end}}">
+<pre><code>
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.mongodb&lt;/groupId&gt;
+        &lt;artifactId&gt;{{$currentDriver}}&lt;/artifactId&gt;
+        &lt;version&gt;{{$currentVersion.version}}&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;sonatype-snapshots&lt;/id&gt;
+        &lt;name&gt;Sontatype Snapshots&lt;/name&gt;
+        &lt;url&gt;https://oss.sonatype.org/content/repositories/snapshots&lt;/url&gt;
+        &lt;snapshots&gt;
+            &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;/snapshots&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;
+</code></pre>
+</div>
+<div id="gradle-{{$versionPos}}" class="download hidden">
+<pre><code>
+  dependencies {
+      compile 'org.mongodb:{{$currentDriver}}:{{$currentVersion.version}}'
+  }
+  repositories {
+    maven {
+      url 'https://oss.sonatype.org/content/repositories/snapshots'
+    }
+  }
+
+</code></pre>
+</div>
+{{ else }}
+<div id="maven-{{$versionPos}}" class="download{{if or (ne $firstDriver true) (ne $currentVersion.status "current") }} hidden{{end}}">
 <pre><code>
 &lt;dependencies&gt;
     &lt;dependency&gt;
@@ -72,10 +111,14 @@
 
 </code></pre>
 </div>
-          {{ $.Scratch.Set "qs.firstDriver" false }}
+{{ end }}
+      {{ if eq $currentVersion.status "current" }}
+        {{ $.Scratch.Set "qs.firstDriver" false }}
+      {{end}}
           {{ $.Scratch.Add "qs.versionPos" 1 }}
           {{ end }}
       {{ end }}
     </div>
     </div>
   </div>
+
