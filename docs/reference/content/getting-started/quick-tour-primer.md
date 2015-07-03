@@ -10,8 +10,8 @@ title = "Quick Tour Primer"
 
 # Quick Tour Primer
 
-The following code snippets come from the `SubscriberHelpers.java` example code
-that can be found with the [examples source]({{< srcref "examples/tour/src/main/tour/SubscriberHelpers.java">}}).
+The aim of this guide is to provide background about the Scala driver and its asynchronous API before going onto 
+looking at how to use the driver and MongoDB.
 
 {{% note %}}
 See the [installation guide]({{< relref "getting-started/installation-guide.md" >}})
@@ -51,13 +51,13 @@ method to convert into an `Observable`.
 
 {{% note %}}
 All [`Observables`](http://www.reactive-streams.org/reactive-streams-1.0.0.RC4-javadoc/?org/reactivestreams/Publisher.html) returned 
-from the API are cold, meaning that nothing happens until they are subscribed to. As such an observer is guaranteed to see the whole 
+from the API are cold, meaning that no I/O happens until they are subscribed to. As such an observer is guaranteed to see the whole 
 sequence from the beginning. So just creating an `Observable` won't cause any network IO, and it's not until `Subscriber.request()` is called 
 that the driver executes the operation.
 
 Publishers in this implementation are unicast. Each [`Subscription`](http://reactivex.io/RxJava/javadoc/rx/Subscription.html) 
-to an `Observable` relates to a single MongoDB operation and it's ['Subscriber'](http://reactivex.io/RxJava/javadoc/rx/Subscriber.html)  
-will receive it's own specific set of results. 
+to an `Observable` relates to a single MongoDB operation and its ['Subscriber'](http://reactivex.io/RxJava/javadoc/rx/Subscriber.html)  
+will receive its own specific set of results. 
 {{% /note %}}
 
 ## Subscribers used in the Quick Tour
