@@ -20,7 +20,7 @@ description = "An RxJava implementation of the MongoDB Java driver"
 archivesBaseName = 'mongodb-driver-rx'
 
 dependencies {
-    compile 'org.mongodb:mongodb-driver-async:3.1.0-SNAPSHOT'
+    compile 'org.mongodb:mongodb-driver-async:3.1.0'
     compile 'io.reactivex:rxjava:1.0.14'
 }
 

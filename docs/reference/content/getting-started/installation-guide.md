@@ -1,5 +1,5 @@
 +++
-date = "2015-03-17T15:36:56Z"
+date = "2015-10-08T09:30:56Z"
 title = "Installation Guide"
 [menu.main]
   parent = "Getting Started"
@@ -18,4 +18,4 @@ The recommended way to get started using the driver in your project is with a de
 An implementation of the MongoDB Driver providing support for [ReactiveX (Reactive Extensions)](http://reactivex.io/)
  by using the [RxJava library](https://github.com/ReactiveX/RxJava).
 
-{{< install artifactId="mongodb-driver-rx" version="1.1.0-SNAPSHOT" mongoDriverVersion="3.1.0-SNAPSHOT" rxJavaVersion="1.0.12">}}
+{{< install artifactId="mongodb-driver-rx" version="1.1.0" mongoDriverVersion="3.1.0" rxJavaVersion="1.0.14">}}
