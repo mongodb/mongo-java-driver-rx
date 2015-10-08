@@ -50,7 +50,7 @@ In RxJava `Observable` is not an interface, so where the MongoDB Async Driver AP
 method to convert into an `Observable`.
 
 {{% note %}}
-All [`Observables`](http://www.reactive-streams.org/reactive-streams-1.0.0.RC4-javadoc/?org/reactivestreams/Publisher.html) returned 
+All [`Observables`](http://reactivex.io/RxJava/javadoc/rx/Observable.html) returned 
 from the API are cold, meaning that no I/O happens until they are subscribed to. As such an observer is guaranteed to see the whole 
 sequence from the beginning. So just creating an `Observable` won't cause any network IO, and it's not until `Subscriber.request()` is called 
 that the driver executes the operation.
