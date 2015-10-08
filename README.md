@@ -2,7 +2,7 @@
 
 An implementation of the MongoDB Driver providing support for [ReactiveX (Reactive Extensions)](http://reactivex.io/). 
 
-This project depends on the [Mongo Java Driver Async Driver](mongodb.github.io/mongo-java-driver/3.0/driver-async/) and 
+This project depends on the [Mongo Java Driver Async Driver](mongodb.github.io/mongo-java-driver/3.1/driver-async/) and 
 [RxJava](https://github.com/ReactiveX/RxJava).
 
 [![Build Status](https://travis-ci.org/mongodb/mongo-java-driver-rx.svg?branch=master)]

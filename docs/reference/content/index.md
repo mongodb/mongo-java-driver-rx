@@ -16,7 +16,7 @@ and a simple tutorial to get up  and running quickly.
 
 {{% note %}}
 This implementation is built upon the MongoDB Async Driver and we mirror their API. 
-For reference documentation please see the [async driver documentation](http://mongodb.github.io/mongo-java-driver/3.0/driver-async).
+For reference documentation please see the [async driver documentation](http://mongodb.github.io/mongo-java-driver/3.1/driver-async).
 {{% /note %}}
 
 
