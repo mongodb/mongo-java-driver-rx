@@ -16,6 +16,7 @@
 
 package com.mongodb.rx.client
 
+import com.mongodb.ReadConcern
 import com.mongodb.ReadPreference
 import com.mongodb.WriteConcern
 import com.mongodb.async.client.MongoCollection as WrappedMongoCollection
@@ -31,7 +32,6 @@ import static com.mongodb.rx.client.CustomMatchers.isTheSameAs
 import static spock.util.matcher.HamcrestSupport.expect
 
 class MongoDatabaseSpecification extends Specification {
-
 
     def subscriber = {
         def subscriber = new TestSubscriber()
@@ -117,6 +117,18 @@ class MongoDatabaseSpecification extends Specification {
         1 * wrapped.getWriteConcern()
     }
 
+    def 'should call the underlying getReadConcern'() {
+        given:
+        def wrapped = Mock(WrappedMongoDatabase)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+
+        when:
+        mongoDatabase.getReadConcern()
+
+        then:
+        1 * wrapped.getReadConcern()
+    }
+
     def 'should call the underlying withCodecRegistry'() {
         given:
         def codecRegistry = Stub(CodecRegistry)
@@ -160,6 +172,22 @@ class MongoDatabaseSpecification extends Specification {
 
         when:
         def result = mongoDatabase.withWriteConcern(writeConcern)
+
+        then:
+        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult))
+    }
+
+    def 'should call the underlying withReadConcern'() {
+        given:
+        def readConcern = ReadConcern.MAJORITY
+        def wrappedResult = Stub(WrappedMongoDatabase)
+        def wrapped = Mock(WrappedMongoDatabase) {
+            1 * withReadConcern(readConcern) >> wrappedResult
+        }
+        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+
+        when:
+        def result = mongoDatabase.withReadConcern(readConcern)
 
         then:
         expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult))

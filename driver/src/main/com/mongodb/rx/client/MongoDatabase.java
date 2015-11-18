@@ -16,6 +16,7 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.annotations.ThreadSafe;
@@ -62,9 +63,18 @@ public interface MongoDatabase {
     WriteConcern getWriteConcern();
 
     /**
+     * Get the read concern for the MongoDatabase.
+     *
+     * @return the {@link com.mongodb.ReadConcern}
+     * @since 1.2
+     * @mongodb.server.release 3.2
+     */
+    ReadConcern getReadConcern();
+
+    /**
      * Create a new MongoDatabase instance with a different codec registry.
      *
-     * @param codecRegistry the new {@link org.bson.codecs.configuration.CodecRegistry} for the collection
+     * @param codecRegistry the new {@link org.bson.codecs.configuration.CodecRegistry} for the database
      * @return a new MongoDatabase instance with the different codec registry
      */
     MongoDatabase withCodecRegistry(CodecRegistry codecRegistry);
@@ -72,7 +82,7 @@ public interface MongoDatabase {
     /**
      * Create a new MongoDatabase instance with a different read preference.
      *
-     * @param readPreference the new {@link com.mongodb.ReadPreference} for the collection
+     * @param readPreference the new {@link com.mongodb.ReadPreference} for the database
      * @return a new MongoDatabase instance with the different readPreference
      */
     MongoDatabase withReadPreference(ReadPreference readPreference);
@@ -80,10 +90,20 @@ public interface MongoDatabase {
     /**
      * Create a new MongoDatabase instance with a different write concern.
      *
-     * @param writeConcern the new {@link com.mongodb.WriteConcern} for the collection
+     * @param writeConcern the new {@link com.mongodb.WriteConcern} for the database
      * @return a new MongoDatabase instance with the different writeConcern
      */
     MongoDatabase withWriteConcern(WriteConcern writeConcern);
+
+    /**
+     * Create a new MongoDatabase instance with a different read concern.
+     *
+     * @param readConcern the new {@link ReadConcern} for the database
+     * @return a new MongoDatabase instance with the different ReadConcern
+     * @since 1.2
+     * @mongodb.server.release 3.2
+     */
+    MongoDatabase withReadConcern(ReadConcern readConcern);
 
     /**
      * Gets a collection.

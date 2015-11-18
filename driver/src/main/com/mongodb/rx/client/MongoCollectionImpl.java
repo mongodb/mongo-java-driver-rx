@@ -18,6 +18,7 @@ package com.mongodb.rx.client;
 
 import com.mongodb.Block;
 import com.mongodb.MongoNamespace;
+import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.async.SingleResultCallback;
@@ -82,6 +83,11 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
     }
 
     @Override
+    public ReadConcern getReadConcern() {
+        return wrapped.getReadConcern();
+    }
+
+    @Override
     public <NewTDocument> MongoCollection<NewTDocument> withDocumentClass(final Class<NewTDocument> clazz) {
         return new MongoCollectionImpl<NewTDocument>(wrapped.withDocumentClass(clazz));
     }
@@ -99,6 +105,11 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
     @Override
     public MongoCollection<TDocument> withWriteConcern(final WriteConcern writeConcern) {
         return new MongoCollectionImpl<TDocument>(wrapped.withWriteConcern(writeConcern));
+    }
+
+    @Override
+    public MongoCollection<TDocument> withReadConcern(final ReadConcern readConcern) {
+        return new MongoCollectionImpl<TDocument>(wrapped.withReadConcern(readConcern));
     }
 
     @Override

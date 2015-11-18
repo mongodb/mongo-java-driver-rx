@@ -18,6 +18,7 @@ package com.mongodb.rx.client
 
 import com.mongodb.CursorType
 import com.mongodb.MongoNamespace
+import com.mongodb.ReadConcern
 import com.mongodb.async.AsyncBatchCursor
 import com.mongodb.async.client.FindIterable
 import com.mongodb.async.client.FindIterableImpl
@@ -71,8 +72,8 @@ class FindObservableSpecification extends Specification {
                 .oplogReplay(false)
                 .noCursorTimeout(false)
                 .partial(false)
-        def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(), executor,
-                new Document('filter', 1), findOptions)
+        def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
+                ReadConcern.DEFAULT, executor, new Document('filter', 1), findOptions)
         def findObservable = new FindObservableImpl<Document>(wrapped)
 
         when: 'default input should be as expected'
@@ -157,8 +158,8 @@ class FindObservableSpecification extends Specification {
             }
         }
         def executor = new TestOperationExecutor([cursor()]);
-        def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, primary(), executor,
-                new Document(), new FindOptions())
+        def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, primary(), ReadConcern.DEFAULT,
+                executor, new Document(), new FindOptions())
         def findObservable = new FindObservableImpl<Document>(wrapped)
 
         when: 'default input should be as expected'
@@ -182,8 +183,8 @@ class FindObservableSpecification extends Specification {
         subscriber.requestMore(100)
         def executor = new TestOperationExecutor([null]);
         def findOptions = new FindOptions()
-        def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(), executor,
-                new Document('filter', 1), findOptions)
+        def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
+                ReadConcern.DEFAULT, executor, new Document('filter', 1), findOptions)
         def findObservable = new FindObservableImpl<Document>(wrapped)
 
         when:

@@ -17,6 +17,7 @@
 package com.mongodb.rx.client
 
 import com.mongodb.MongoNamespace
+import com.mongodb.ReadConcern
 import com.mongodb.async.client.MapReduceIterable
 import com.mongodb.async.client.MapReduceIterableImpl
 import com.mongodb.async.client.MongoIterable
@@ -62,7 +63,7 @@ class MapReduceObservableSpecification extends Specification {
         subscriber.requestMore(100)
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new MapReduceIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                executor, 'map', 'reduce')
+                ReadConcern.DEFAULT, executor, 'map', 'reduce')
         def mapReduceObservable = new MapReduceObservableImpl(wrapped)
 
         when: 'default input should be as expected'
@@ -112,7 +113,7 @@ class MapReduceObservableSpecification extends Specification {
         when: 'mapReduce to a collection'
         def collectionNamespace = new MongoNamespace('dbName', 'collName')
         def wrapped = new MapReduceIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                executor, 'map', 'reduce')
+                ReadConcern.DEFAULT, executor, 'map', 'reduce')
         def mapReduceObservable = new MapReduceObservableImpl(wrapped)
         mapReduceObservable.collectionName(collectionNamespace.getCollectionName())
                 .databaseName(collectionNamespace.getDatabaseName())

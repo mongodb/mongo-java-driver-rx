@@ -17,6 +17,7 @@
 package com.mongodb.rx.client
 
 import com.mongodb.MongoNamespace
+import com.mongodb.ReadConcern
 import com.mongodb.async.client.AggregateIterableImpl
 import com.mongodb.async.client.MongoIterable
 import com.mongodb.operation.AggregateOperation
@@ -60,7 +61,7 @@ class AggregateObservableSpecification extends Specification {
         def executor = new TestOperationExecutor([null, null]);
         def pipeline = [new Document('$match', 1)]
         def wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
-                executor, pipeline)
+                ReadConcern.DEFAULT, executor, pipeline)
         def aggregateObservable = new AggregateObservableImpl<Document>(wrapped)
 
         when: 'default input should be as expected'
@@ -97,7 +98,7 @@ class AggregateObservableSpecification extends Specification {
         def collectionNamespace = new MongoNamespace(namespace.getDatabaseName(), collectionName)
         def pipeline = [new Document('$match', 1), new Document('$out', collectionName)]
         def wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
-                executor, pipeline)
+                ReadConcern.DEFAULT, executor, pipeline)
         def aggregateObservable = new AggregateObservableImpl<Document>(wrapped)
                 .maxTime(999, MILLISECONDS)
                 .allowDiskUse(true)
@@ -124,7 +125,7 @@ class AggregateObservableSpecification extends Specification {
 
         when: 'toCollection should work as expected'
         wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
-                executor, pipeline)
+                ReadConcern.DEFAULT, executor, pipeline)
         new AggregateObservableImpl<Document>(wrapped).toCollection().subscribe(new TestSubscriber())
         operation = executor.getWriteOperation() as AggregateToCollectionOperation
 

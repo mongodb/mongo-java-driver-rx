@@ -17,6 +17,7 @@
 package com.mongodb.rx.client
 
 import com.mongodb.MongoNamespace
+import com.mongodb.ReadConcern
 import com.mongodb.ReadPreference
 import com.mongodb.WriteConcern
 import com.mongodb.async.client.MongoCollection as WrappedMongoCollection
@@ -51,7 +52,6 @@ class MongoCollectionSpecification extends Specification {
         subscriber.requestMore(1)
         subscriber
     }
-
 
     def 'should have the same methods as the wrapped MongoCollection'() {
         given:
@@ -101,6 +101,14 @@ class MongoCollectionSpecification extends Specification {
 
         then:
         1 * wrapped.getWriteConcern()
+    }
+
+    def 'should call the underlying getReadConcern'() {
+        when:
+        mongoCollection.getReadConcern()
+
+        then:
+        1 * wrapped.getReadConcern()
     }
 
     def 'should use the underlying withDocumentClass'() {
@@ -161,6 +169,22 @@ class MongoCollectionSpecification extends Specification {
 
         when:
         def result = mongoCollection.withWriteConcern(writeConcern)
+
+        then:
+        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult))
+    }
+
+    def 'should call the underlying withReadConcern'() {
+        given:
+        def readConcern = ReadConcern.MAJORITY
+        def wrappedResult = Stub(WrappedMongoCollection)
+        def wrapped = Mock(WrappedMongoCollection) {
+            1 * withReadConcern(readConcern) >> wrappedResult
+        }
+        def mongoCollection = new MongoCollectionImpl(wrapped)
+
+        when:
+        def result = mongoCollection.withReadConcern(readConcern)
 
         then:
         expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult))

@@ -17,6 +17,7 @@
 package com.mongodb.rx.client
 
 import com.mongodb.MongoNamespace
+import com.mongodb.ReadConcern
 import com.mongodb.async.client.DistinctIterable
 import com.mongodb.async.client.DistinctIterableImpl
 import com.mongodb.async.client.MongoIterable
@@ -60,7 +61,7 @@ class DistinctObservableSpecification extends Specification {
         subscriber.requestMore(100)
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new DistinctIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                executor, 'field', new BsonDocument())
+                ReadConcern.DEFAULT, executor, 'field', new BsonDocument())
         def distinctObservable = new DistinctObservableImpl(wrapped)
 
         when: 'default input should be as expected'
