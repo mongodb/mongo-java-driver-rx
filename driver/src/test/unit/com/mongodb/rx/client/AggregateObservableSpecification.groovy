@@ -102,6 +102,7 @@ class AggregateObservableSpecification extends Specification {
                 .maxTime(999, MILLISECONDS)
                 .allowDiskUse(true)
                 .useCursor(true)
+                .bypassDocumentValidation(true)
 
         when: 'aggregation includes $out'
         aggregateObservable.subscribe(subscriber)
@@ -111,7 +112,8 @@ class AggregateObservableSpecification extends Specification {
         expect operation, isTheSameAs(new AggregateToCollectionOperation(namespace,
                 [new BsonDocument('$match', new BsonInt32(1)), new BsonDocument('$out', new BsonString(collectionName))])
                 .maxTime(999, MILLISECONDS)
-                .allowDiskUse(true))
+                .allowDiskUse(true)
+                .bypassDocumentValidation(true))
 
         when: 'the subsequent read should have the batchSize set'
         operation = executor.getReadOperation() as FindOperation<Document>

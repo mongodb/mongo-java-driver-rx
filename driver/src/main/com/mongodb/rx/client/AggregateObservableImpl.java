@@ -56,6 +56,12 @@ class AggregateObservableImpl<TResult> implements AggregateObservable<TResult> {
     }
 
     @Override
+    public AggregateObservable<TResult> bypassDocumentValidation(final Boolean bypassDocumentValidation) {
+        wrapped.bypassDocumentValidation(bypassDocumentValidation);
+        return this;
+    }
+
+    @Override
     public Observable<Success> toCollection() {
         return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
             @Override

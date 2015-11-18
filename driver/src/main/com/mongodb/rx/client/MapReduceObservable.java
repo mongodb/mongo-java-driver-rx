@@ -152,6 +152,19 @@ public interface MapReduceObservable<TResult> extends MongoObservable<TResult> {
     MapReduceObservable<TResult> nonAtomic(boolean nonAtomic);
 
     /**
+     * Sets the bypass document level validation flag.
+     *
+     * <p>Note: This only applies when an $out stage is specified</p>.
+     *
+     * @param bypassDocumentValidation If true, allows the write to opt-out of document level validation.
+     * @return this
+     * @since 1.2
+     * @mongodb.driver.manual reference/command/mapReduce mapReduce
+     * @mongodb.server.release 3.2
+     */
+    MapReduceObservable<TResult> bypassDocumentValidation(Boolean bypassDocumentValidation);
+
+    /**
      * Aggregates documents to a collection according to the specified map-reduce function with the given options, which must specify a
      * non-inline result.
      *

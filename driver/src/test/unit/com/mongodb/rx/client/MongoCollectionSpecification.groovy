@@ -29,6 +29,7 @@ import com.mongodb.client.model.IndexModel
 import com.mongodb.client.model.IndexOptions
 import com.mongodb.client.model.InsertManyOptions
 import com.mongodb.client.model.InsertOneModel
+import com.mongodb.client.model.InsertOneOptions
 import com.mongodb.client.model.RenameCollectionOptions
 import com.mongodb.client.model.UpdateOptions
 import org.bson.BsonDocument
@@ -318,6 +319,7 @@ class MongoCollectionSpecification extends Specification {
     def 'should use the underlying insertOne'() {
         given:
         def insert = new Document('_id', 1)
+        def options = new InsertOneOptions().bypassDocumentValidation(true)
 
         when:
         mongoCollection.insertOne(insert)
@@ -330,6 +332,12 @@ class MongoCollectionSpecification extends Specification {
 
         then:
         1 * wrapped.insertOne(insert, _)
+
+        when:
+        mongoCollection.insertOne(insert, options).subscribe(subscriber())
+
+        then:
+        1 * wrapped.insertOne(insert, options, _)
     }
 
     def 'should use the underlying insertMany'() {

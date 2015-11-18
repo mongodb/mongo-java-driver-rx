@@ -31,6 +31,7 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertManyOptions;
+import com.mongodb.client.model.InsertOneOptions;
 import com.mongodb.client.model.RenameCollectionOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
@@ -193,6 +194,16 @@ class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
             @Override
             public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.insertOne(document, voidToSuccessCallback(callback));
+            }
+        }));
+    }
+
+    @Override
+    public Observable<Success> insertOne(final TDocument document, final InsertOneOptions options) {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
+            @Override
+            public void apply(final SingleResultCallback<Success> callback) {
+                wrapped.insertOne(document, options, voidToSuccessCallback(callback));
             }
         }));
     }

@@ -30,9 +30,7 @@ import java.util.concurrent.TimeUnit;
 import static com.mongodb.assertions.Assertions.notNull;
 import static com.mongodb.rx.client.ObservableHelper.voidToSuccessCallback;
 
-
 class MapReduceObservableImpl<TResult> implements MapReduceObservable<TResult> {
-
 
     private final com.mongodb.async.client.MapReduceIterable<TResult> wrapped;
 
@@ -116,6 +114,12 @@ class MapReduceObservableImpl<TResult> implements MapReduceObservable<TResult> {
     @Override
     public MapReduceObservable<TResult> nonAtomic(final boolean nonAtomic) {
         wrapped.nonAtomic(nonAtomic);
+        return this;
+    }
+
+    @Override
+    public MapReduceObservable<TResult> bypassDocumentValidation(final Boolean bypassDocumentValidation) {
+        wrapped.bypassDocumentValidation(bypassDocumentValidation);
         return this;
     }
 

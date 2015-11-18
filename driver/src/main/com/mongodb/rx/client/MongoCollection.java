@@ -29,6 +29,7 @@ import com.mongodb.client.model.FindOneAndUpdateOptions;
 import com.mongodb.client.model.IndexModel;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.InsertManyOptions;
+import com.mongodb.client.model.InsertOneOptions;
 import com.mongodb.client.model.RenameCollectionOptions;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
@@ -274,6 +275,17 @@ public interface MongoCollection<TDocument> {
      * com.mongodb.DuplicateKeyException or com.mongodb.MongoException
      */
     Observable<Success> insertOne(TDocument document);
+
+    /**
+     * Inserts the provided document. If the document is missing an identifier, the driver should generate one.
+     *
+     * @param document the document to insert
+     * @param options  the options to apply to the operation
+     * @return an Observable with a single element indicating when the operation has completed or with either a
+     * com.mongodb.DuplicateKeyException or com.mongodb.MongoException
+     * @since 1.2
+     */
+    Observable<Success> insertOne(TDocument document, InsertOneOptions options);
 
     /**
      * Inserts a batch of documents. The preferred way to perform bulk inserts is to use the BulkWrite API. However, when talking with a

@@ -67,8 +67,6 @@ class MongoClientSpecification extends Specification {
 
         then:
         expect observable, isTheSameAs(new ListDatabasesObservableImpl(wrappedResult))
-
-
     }
 
     def 'should call the underlying listDatabaseNames'() {
