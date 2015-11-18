@@ -145,7 +145,7 @@ subscriber.awaitTerminalEvent();
 
 // Find using the $language operator
 subscriber = printSubscriber("Text search matches (english): ");
-Bson textSearch = text("textual content -irrelevant", "english");
+Bson textSearch = text("textual content -irrelevant", new TextSearchOptions().language("english"));
 collection.count(textSearch).subscribe(subscriber);
 subscriber.awaitTerminalEvent();
 

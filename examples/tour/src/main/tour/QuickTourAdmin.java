@@ -17,6 +17,7 @@
 package tour;
 
 import com.mongodb.client.model.CreateCollectionOptions;
+import com.mongodb.client.model.TextSearchOptions;
 import com.mongodb.rx.client.MongoClient;
 import com.mongodb.rx.client.MongoClients;
 import com.mongodb.rx.client.MongoCollection;
@@ -103,7 +104,7 @@ public final class QuickTourAdmin {
 
         // Find using the $language operator
         subscriber = printSubscriber("Text search matches (english): ");
-        Bson textSearch = text("textual content -irrelevant", "english");
+        Bson textSearch = text("textual content -irrelevant", new TextSearchOptions().language("english"));
         collection.count(textSearch).subscribe(subscriber);
         subscriber.awaitTerminalEvent();
 

@@ -1,4 +1,4 @@
-baseurl = "/mongo-java-driver-rx/1.1"
+baseurl = "/mongo-java-driver-rx/1.2"
 languageCode = "en-us"
 title = "MongoDB RxJava Driver"
 theme = "mongodb"
@@ -20,4 +20,4 @@ canonifyurls = false
     pre = "<i class='fa fa-github'></i>"
     weight = 90
     identifier = "githubLink"
-    url = "https://github.com/mongodb/mongo-java-driver-rx/tree/1.0.x"
+    url = "https://github.com/mongodb/mongo-java-driver-rx/tree/master"
