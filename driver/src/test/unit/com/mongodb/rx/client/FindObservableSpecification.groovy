@@ -39,6 +39,7 @@ import static com.mongodb.ReadPreference.primary
 import static com.mongodb.ReadPreference.secondary
 import static com.mongodb.rx.client.CustomMatchers.isTheSameAs
 import static java.util.concurrent.TimeUnit.MILLISECONDS
+import static java.util.concurrent.TimeUnit.SECONDS
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders
 import static spock.util.matcher.HamcrestSupport.expect
 
@@ -104,7 +105,8 @@ class FindObservableSpecification extends Specification {
                 .sort(new Document('sort', 2))
                 .modifiers(new Document('modifier', 2))
                 .projection(new Document('projection', 2))
-                .maxTime(999, MILLISECONDS)
+                .maxTime(1000, MILLISECONDS)
+                .maxAwaitTime(2000, MILLISECONDS)
                 .limit(99)
                 .skip(9)
                 .cursorType(CursorType.Tailable)
@@ -121,7 +123,8 @@ class FindObservableSpecification extends Specification {
                 .sort(new BsonDocument('sort', new BsonInt32(2)))
                 .modifiers(new BsonDocument('modifier', new BsonInt32(2)))
                 .projection(new BsonDocument('projection', new BsonInt32(2)))
-                .maxTime(999, MILLISECONDS)
+                .maxTime(1, SECONDS)
+                .maxAwaitTime(2, SECONDS)
                 .batchSize(100)
                 .limit(99)
                 .skip(9)

@@ -72,6 +72,12 @@ class FindObservableImpl<TResult> implements FindObservable<TResult> {
     }
 
     @Override
+    public FindObservable<TResult> maxAwaitTime(final long maxAwaitTime, final TimeUnit timeUnit) {
+        wrapped.maxAwaitTime(maxAwaitTime, timeUnit);
+        return this;
+    }
+
+    @Override
     public FindObservable<TResult> modifiers(final Bson modifiers) {
         wrapped.modifiers(modifiers);
         return this;
