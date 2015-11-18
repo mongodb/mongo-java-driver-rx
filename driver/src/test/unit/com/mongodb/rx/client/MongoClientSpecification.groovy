@@ -27,12 +27,14 @@ import static spock.util.matcher.HamcrestSupport.expect
 class MongoClientSpecification extends Specification {
 
     def wrapped = Mock(WrappedMongoClient)
-    def mongoClient = new MongoClientImpl(wrapped)
+    def observableAdapter = new ObservableHelper.NoopObservableAdapter()
+    def mongoClient = new MongoClientImpl(wrapped, observableAdapter)
 
     def 'should have the same methods as the wrapped MongoClient'() {
         given:
+        def exclusions = ['getObservableAdapter', 'withObservableAdapter']
         def wrapped = WrappedMongoClient.methods*.name.sort()
-        def local = MongoClient.methods*.name.sort()
+        def local = MongoClient.methods*.name.sort() - exclusions
 
         expect:
         wrapped == local
@@ -53,20 +55,20 @@ class MongoClientSpecification extends Specification {
             1 * listDatabases(Document) >> wrappedResult
             1 * listDatabases(BsonDocument) >> wrappedResult
         }
-        def mongoClient = new MongoClientImpl(wrapped)
+        def mongoClient = new MongoClientImpl(wrapped, observableAdapter)
 
 
         when:
         def observable = mongoClient.listDatabases()
 
         then:
-        expect observable, isTheSameAs(new ListDatabasesObservableImpl(wrappedResult))
+        expect observable, isTheSameAs(new ListDatabasesObservableImpl(wrappedResult, observableAdapter))
 
         when:
         observable = mongoClient.listDatabases(BsonDocument)
 
         then:
-        expect observable, isTheSameAs(new ListDatabasesObservableImpl(wrappedResult))
+        expect observable, isTheSameAs(new ListDatabasesObservableImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying listDatabaseNames'() {

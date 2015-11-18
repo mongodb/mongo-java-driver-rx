@@ -21,9 +21,12 @@ import com.mongodb.async.client.Observable
 import com.mongodb.async.client.Observer
 import com.mongodb.async.client.Subscription
 import rx.observers.TestSubscriber
+import rx.schedulers.Schedulers
 import spock.lang.Specification
 
 class RxObservablesSpecification extends Specification {
+
+    def observableAdapter = new ObservableHelper.NoopObservableAdapter()
 
     def 'should be cold and nothing should happen until request is called'() {
         given:
@@ -51,7 +54,7 @@ class RxObservablesSpecification extends Specification {
                     }
                 })
             }
-        })
+        }, observableAdapter)
 
         then:
         !requested
@@ -63,6 +66,7 @@ class RxObservablesSpecification extends Specification {
         requested
         subscriber.assertNoErrors()
         subscriber.assertTerminalEvent()
+        subscriber.getLastSeenThread() == Thread.currentThread()
     }
 
     def 'should pass Observer.onNext values to Subscriber.onNext'() {
@@ -91,7 +95,7 @@ class RxObservablesSpecification extends Specification {
                     }
                 })
             }
-        }).subscribe(subscriber)
+        }, observableAdapter).subscribe(subscriber)
         subscriber.requestMore(3)
 
         then:
@@ -136,7 +140,7 @@ class RxObservablesSpecification extends Specification {
                     }
                 })
             }
-        }).subscribe(subscriber)
+        }, observableAdapter).subscribe(subscriber)
         subscriber.requestMore(1)
 
         then:
@@ -168,7 +172,7 @@ class RxObservablesSpecification extends Specification {
                     }
                 })
             }
-        }).subscribe(subscriber)
+        }, observableAdapter).subscribe(subscriber)
         subscriber.requestMore(1)
 
         then:
@@ -202,7 +206,7 @@ class RxObservablesSpecification extends Specification {
             void subscribe(final Observer observer) {
                 observer.onSubscribe(subscription)
             }
-        }).subscribe(subscriber)
+        }, observableAdapter).subscribe(subscriber)
 
         then:
         !unsubscribed
@@ -237,10 +241,48 @@ class RxObservablesSpecification extends Specification {
                     }
                 })
             }
-        }).subscribe(subscriber)
+        }, observableAdapter).subscribe(subscriber)
         subscriber.requestMore(-1)
 
         then:
         thrown(IllegalArgumentException)
+    }
+
+    def 'should use the passed ObserverAdapter to adapt the resulting Observer'() {
+        given:
+        def subscriber = new TestSubscriber(3)
+        def scheduler = Schedulers.newThread()
+
+        when:
+        def observer = RxObservables.create(new Observable() {
+            @Override
+            void subscribe(final Observer observer) {
+                observer.onSubscribe(new Subscription() {
+                    @Override
+                    void request(final long n) {
+                        (1..n).each {  observer.onNext('onNext called') }
+                    }
+
+                    @Override
+                    void unsubscribe() {
+                    }
+
+                    @Override
+                    boolean isUnsubscribed() {
+                        false
+                    }
+                })
+            }
+        }, new ObservableAdapter() {
+            @Override
+            def <T> rx.Observable<T> adapt(final rx.Observable<T> observable) {
+                observable.observeOn(scheduler);
+            }
+        }).subscribe(subscriber)
+        subscriber.awaitTerminalEvent()
+
+        then:
+        subscriber.assertReceivedOnNext(['onNext called', 'onNext called', 'onNext called'])
+        subscriber.getLastSeenThread() != Thread.currentThread()
     }
 }

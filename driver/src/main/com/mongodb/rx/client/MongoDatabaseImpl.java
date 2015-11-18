@@ -34,14 +34,21 @@ import static com.mongodb.rx.client.ObservableHelper.voidToSuccessCallback;
 class MongoDatabaseImpl implements MongoDatabase {
 
     private final com.mongodb.async.client.MongoDatabase wrapped;
+    private final ObservableAdapter observableAdapter;
 
-    MongoDatabaseImpl(final com.mongodb.async.client.MongoDatabase wrapped) {
+    MongoDatabaseImpl(final com.mongodb.async.client.MongoDatabase wrapped, final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
+        this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
     @Override
     public String getName() {
         return wrapped.getName();
+    }
+
+    @Override
+    public ObservableAdapter getObservableAdapter() {
+        return observableAdapter;
     }
 
     @Override
@@ -65,23 +72,28 @@ class MongoDatabaseImpl implements MongoDatabase {
     }
 
     @Override
+    public MongoDatabase withObservableAdapter(final ObservableAdapter observableAdapter) {
+        return new MongoDatabaseImpl(wrapped, observableAdapter);
+    }
+
+    @Override
     public MongoDatabase withCodecRegistry(final CodecRegistry codecRegistry) {
-        return new MongoDatabaseImpl(wrapped.withCodecRegistry(codecRegistry));
+        return new MongoDatabaseImpl(wrapped.withCodecRegistry(codecRegistry), observableAdapter);
     }
 
     @Override
     public MongoDatabase withReadPreference(final ReadPreference readPreference) {
-        return new MongoDatabaseImpl(wrapped.withReadPreference(readPreference));
+        return new MongoDatabaseImpl(wrapped.withReadPreference(readPreference), observableAdapter);
     }
 
     @Override
     public MongoDatabase withWriteConcern(final WriteConcern writeConcern) {
-        return new MongoDatabaseImpl(wrapped.withWriteConcern(writeConcern));
+        return new MongoDatabaseImpl(wrapped.withWriteConcern(writeConcern), observableAdapter);
     }
 
     @Override
     public MongoDatabase withReadConcern(final ReadConcern readConcern) {
-        return new MongoDatabaseImpl(wrapped.withReadConcern(readConcern));
+        return new MongoDatabaseImpl(wrapped.withReadConcern(readConcern), observableAdapter);
     }
 
     @Override
@@ -91,7 +103,7 @@ class MongoDatabaseImpl implements MongoDatabase {
 
     @Override
     public <TDocument> MongoCollection<TDocument> getCollection(final String collectionName, final Class<TDocument> clazz) {
-        return new MongoCollectionImpl<TDocument>(wrapped.getCollection(collectionName, clazz));
+        return new MongoCollectionImpl<TDocument>(wrapped.getCollection(collectionName, clazz), observableAdapter);
     }
 
     @Override
@@ -111,7 +123,7 @@ class MongoDatabaseImpl implements MongoDatabase {
             public void apply(final SingleResultCallback<TResult> callback) {
                 wrapped.runCommand(command, clazz, callback);
             }
-        }));
+        }), observableAdapter);
     }
 
     @Override
@@ -122,7 +134,7 @@ class MongoDatabaseImpl implements MongoDatabase {
             public void apply(final SingleResultCallback<TResult> callback) {
                 wrapped.runCommand(command, readPreference, clazz, callback);
             }
-        }));
+        }), observableAdapter);
     }
 
     @Override
@@ -132,12 +144,12 @@ class MongoDatabaseImpl implements MongoDatabase {
             public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.drop(voidToSuccessCallback(callback));
             }
-        }));
+        }), observableAdapter);
     }
 
     @Override
     public Observable<String> listCollectionNames() {
-        return RxObservables.create(Observables.observe(wrapped.listCollectionNames()));
+        return RxObservables.create(Observables.observe(wrapped.listCollectionNames()), observableAdapter);
     }
 
     @Override
@@ -147,7 +159,7 @@ class MongoDatabaseImpl implements MongoDatabase {
 
     @Override
     public <C> ListCollectionsObservable<C> listCollections(final Class<C> clazz) {
-        return new ListCollectionsObservableImpl<C>(wrapped.listCollections(clazz));
+        return new ListCollectionsObservableImpl<C>(wrapped.listCollections(clazz), observableAdapter);
     }
 
     @Override
@@ -162,6 +174,6 @@ class MongoDatabaseImpl implements MongoDatabase {
             public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.createCollection(collectionName, options, voidToSuccessCallback(callback));
             }
-        }));
+        }), observableAdapter);
     }
 }

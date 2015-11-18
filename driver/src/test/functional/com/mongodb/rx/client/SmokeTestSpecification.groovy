@@ -23,6 +23,7 @@ import org.bson.Document
 import rx.Observable
 import rx.Subscriber
 import rx.observers.TestSubscriber
+import rx.schedulers.Schedulers
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -145,6 +146,37 @@ class SmokeTestSpecification extends FunctionalSpecification {
 
         then:
         !run('the collection name is no longer in the collectionNames list', database.listCollectionNames()).contains(collectionName)
+    }
+
+    def 'should be able to use an alternative ObservableAdapter'() {
+        given:
+        def observableAdapter = new ObservableAdapter() {
+            @Override
+            def <T> Observable<T> adapt(final Observable<T> observable) {
+                observable.observeOn(Schedulers.newThread())
+            }
+        }
+        def mongoClient = getMongoClient()
+        def document = new Document('_id', 1)
+
+        when:
+        def collection = mongoClient.getDatabase(databaseName).getCollection(collectionName).withObservableAdapter(observableAdapter)
+
+        then:
+        run('The count is zero', collection.count()).head() == 0
+
+        then:
+        run('find first should return nothing if no documents', collection.find().first()) == []
+
+        then:
+        run('Insert a document', collection.insertOne(document)).head() == Success.SUCCESS
+
+        then:
+        run('The count is one', collection.count()).head() == 1
+
+        then:
+        run('find that document', collection.find().first()).head() == document
+
     }
 
     @SuppressWarnings('BusyWait')

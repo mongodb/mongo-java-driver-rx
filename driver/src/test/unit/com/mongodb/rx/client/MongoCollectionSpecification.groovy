@@ -45,7 +45,8 @@ import static spock.util.matcher.HamcrestSupport.expect
 class MongoCollectionSpecification extends Specification {
 
     def wrapped = Mock(WrappedMongoCollection)
-    def mongoCollection = new MongoCollectionImpl(wrapped)
+    def observableAdapter = new ObservableHelper.NoopObservableAdapter()
+    def mongoCollection = new MongoCollectionImpl(wrapped, observableAdapter)
     def filter = new Document('_id', 1)
     def subscriber = {
         def subscriber = new TestSubscriber()
@@ -55,8 +56,9 @@ class MongoCollectionSpecification extends Specification {
 
     def 'should have the same methods as the wrapped MongoCollection'() {
         given:
+        def exclusions = ['getObservableAdapter', 'withObservableAdapter']
         def wrapped = WrappedMongoCollection.methods*.name.sort()
-        def local = MongoCollection.methods*.name.sort()
+        def local = MongoCollection.methods*.name.sort() - exclusions
 
         expect:
         wrapped == local
@@ -117,13 +119,13 @@ class MongoCollectionSpecification extends Specification {
         def wrapped = Mock(WrappedMongoCollection) {
             1 * withDocumentClass(BsonDocument) >> wrappedResult
         }
-        def mongoCollection = new MongoCollectionImpl(wrapped)
+        def mongoCollection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoCollection.withDocumentClass(BsonDocument)
 
         then:
-        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying withCodecRegistry'() {
@@ -133,13 +135,13 @@ class MongoCollectionSpecification extends Specification {
         def wrapped = Mock(WrappedMongoCollection) {
             1 * withCodecRegistry(codecRegistry) >> wrappedResult
         }
-        def mongoCollection = new MongoCollectionImpl(wrapped)
+        def mongoCollection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoCollection.withCodecRegistry(codecRegistry)
 
         then:
-        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying withReadPreference'() {
@@ -149,13 +151,13 @@ class MongoCollectionSpecification extends Specification {
         def wrapped = Mock(WrappedMongoCollection) {
             1 * withReadPreference(readPreference) >> wrappedResult
         }
-        def mongoCollection = new MongoCollectionImpl(wrapped)
+        def mongoCollection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoCollection.withReadPreference(readPreference)
 
         then:
-        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying withWriteConcern'() {
@@ -165,13 +167,13 @@ class MongoCollectionSpecification extends Specification {
         def wrapped = Mock(WrappedMongoCollection) {
             1 * withWriteConcern(writeConcern) >> wrappedResult
         }
-        def mongoCollection = new MongoCollectionImpl(wrapped)
+        def mongoCollection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoCollection.withWriteConcern(writeConcern)
 
         then:
-        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying withReadConcern'() {
@@ -181,13 +183,13 @@ class MongoCollectionSpecification extends Specification {
         def wrapped = Mock(WrappedMongoCollection) {
             1 * withReadConcern(readConcern) >> wrappedResult
         }
-        def mongoCollection = new MongoCollectionImpl(wrapped)
+        def mongoCollection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoCollection.withReadConcern(readConcern)
 
         then:
-        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoCollectionImpl(wrappedResult, observableAdapter))
     }
 
     def 'should use the underlying count'() {
@@ -225,13 +227,13 @@ class MongoCollectionSpecification extends Specification {
         def wrapped = Stub(WrappedMongoCollection) {
             distinct(_, _) >> Stub(com.mongodb.async.client.DistinctIterable)
         }
-        def collection = new MongoCollectionImpl(wrapped)
+        def collection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def distinctObservable = collection.distinct('field', String)
 
         then:
-        expect distinctObservable, isTheSameAs(new DistinctObservableImpl(wrapped.distinct('field', String)))
+        expect distinctObservable, isTheSameAs(new DistinctObservableImpl(wrapped.distinct('field', String), observableAdapter))
     }
 
     def 'should create FindObservable correctly'() {
@@ -244,31 +246,31 @@ class MongoCollectionSpecification extends Specification {
             1 * find(new Document(), BsonDocument) >> wrappedResult
             2 * getDocumentClass() >> Document
         }
-        def collection = new MongoCollectionImpl(wrapped)
+        def collection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def findObservable = collection.find()
 
         then:
-        expect findObservable, isTheSameAs(new FindObservableImpl(wrappedResult))
+        expect findObservable, isTheSameAs(new FindObservableImpl(wrappedResult, observableAdapter))
 
         when:
         findObservable = collection.find(BsonDocument)
 
         then:
-        expect findObservable, isTheSameAs(new FindObservableImpl(wrappedResult))
+        expect findObservable, isTheSameAs(new FindObservableImpl(wrappedResult, observableAdapter))
 
         when:
         findObservable = collection.find(new Document())
 
         then:
-        expect findObservable, isTheSameAs(new FindObservableImpl(wrappedResult))
+        expect findObservable, isTheSameAs(new FindObservableImpl(wrappedResult, observableAdapter))
 
         when:
         findObservable = collection.find(new Document(), BsonDocument)
 
         then:
-        expect findObservable, isTheSameAs(new FindObservableImpl(wrappedResult))
+        expect findObservable, isTheSameAs(new FindObservableImpl(wrappedResult, observableAdapter))
     }
 
     def 'should use aggregateObservable correctly'() {
@@ -278,20 +280,20 @@ class MongoCollectionSpecification extends Specification {
             1 * aggregate(_, Document) >> wrappedResult
             1 * aggregate(_, BsonDocument) >> wrappedResult
         }
-        def collection = new MongoCollectionImpl(wrapped)
+        def collection = new MongoCollectionImpl(wrapped, observableAdapter)
         def pipeline = [new Document('$match', 1)]
 
         when:
         def aggregateObservable = collection.aggregate(pipeline)
 
         then:
-        expect aggregateObservable, isTheSameAs(new AggregateObservableImpl(wrappedResult))
+        expect aggregateObservable, isTheSameAs(new AggregateObservableImpl(wrappedResult, observableAdapter))
 
         when:
         aggregateObservable = collection.aggregate(pipeline, BsonDocument)
 
         then:
-        expect aggregateObservable, isTheSameAs(new AggregateObservableImpl(wrappedResult))
+        expect aggregateObservable, isTheSameAs(new AggregateObservableImpl(wrappedResult, observableAdapter))
     }
 
     def 'should create MapReduceObservable correctly'() {
@@ -301,19 +303,19 @@ class MongoCollectionSpecification extends Specification {
             1 * mapReduce('map', 'reduce', Document) >> wrappedResult
             1 * mapReduce('map', 'reduce', BsonDocument) >> wrappedResult
         }
-        def collection = new MongoCollectionImpl(wrapped)
+        def collection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def mapReduceObservable = collection.mapReduce('map', 'reduce')
 
         then:
-        expect mapReduceObservable, isTheSameAs(new MapReduceObservableImpl(wrappedResult))
+        expect mapReduceObservable, isTheSameAs(new MapReduceObservableImpl(wrappedResult, observableAdapter))
 
         when:
         mapReduceObservable = collection.mapReduce('map', 'reduce', BsonDocument)
 
         then:
-        expect mapReduceObservable, isTheSameAs(new MapReduceObservableImpl(wrappedResult))
+        expect mapReduceObservable, isTheSameAs(new MapReduceObservableImpl(wrappedResult, observableAdapter))
     }
 
 
@@ -621,19 +623,19 @@ class MongoCollectionSpecification extends Specification {
             listIndexes(_) >> Stub(com.mongodb.async.client.ListIndexesIterable)
             getDocumentClass() >> Document
         }
-        def mongoCollection = new MongoCollectionImpl(wrapped)
+        def mongoCollection = new MongoCollectionImpl(wrapped, observableAdapter)
 
         when:
         def observable = mongoCollection.listIndexes()
 
         then:
-        expect observable, isTheSameAs(new ListIndexesObservableImpl(wrapped.listIndexes(Document)))
+        expect observable, isTheSameAs(new ListIndexesObservableImpl(wrapped.listIndexes(Document), observableAdapter))
 
         when:
         mongoCollection.listIndexes(BsonDocument)
 
         then:
-        expect observable, isTheSameAs(new ListIndexesObservableImpl(wrapped.listIndexes(BsonDocument)))
+        expect observable, isTheSameAs(new ListIndexesObservableImpl(wrapped.listIndexes(BsonDocument), observableAdapter))
     }
 
     def 'should use the underlying dropIndex'() {

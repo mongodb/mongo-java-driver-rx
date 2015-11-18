@@ -27,13 +27,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 final class RxObservables {
 
-    static <TResult> rx.Observable<TResult> create(final Observable<TResult> observable) {
-        return rx.Observable.create(new rx.Observable.OnSubscribe<TResult>() {
+    static <TResult> rx.Observable<TResult> create(final Observable<TResult> observable, final ObservableAdapter observableAdapter) {
+        return observableAdapter.adapt(rx.Observable.create(new rx.Observable.OnSubscribe<TResult>() {
             @Override
             public void call(final Subscriber<? super TResult> subscriber) {
                 new ObservableToProducer<TResult>(observable, subscriber);
             }
-        });
+        }));
     }
 
     static final class ObservableToProducer<TResult> implements Producer {

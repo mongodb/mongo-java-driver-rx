@@ -31,9 +31,11 @@ import static com.mongodb.rx.client.ObservableHelper.voidToSuccessCallback;
 class AggregateObservableImpl<TResult> implements AggregateObservable<TResult> {
 
     private final com.mongodb.async.client.AggregateIterable<TResult> wrapped;
+    private final ObservableAdapter observableAdapter;
 
-    AggregateObservableImpl(final com.mongodb.async.client.AggregateIterable<TResult> wrapped) {
+    AggregateObservableImpl(final com.mongodb.async.client.AggregateIterable<TResult> wrapped, final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
+        this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
 
@@ -68,12 +70,12 @@ class AggregateObservableImpl<TResult> implements AggregateObservable<TResult> {
             public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.toCollection(voidToSuccessCallback(callback));
             }
-        }));
+        }), observableAdapter);
     }
 
     @Override
     public Observable<TResult> toObservable() {
-        return RxObservables.create(Observables.observe(wrapped));
+        return RxObservables.create(Observables.observe(wrapped), observableAdapter);
     }
 
     @Override

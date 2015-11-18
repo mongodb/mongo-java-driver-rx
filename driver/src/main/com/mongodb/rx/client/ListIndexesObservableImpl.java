@@ -28,9 +28,12 @@ import static com.mongodb.assertions.Assertions.notNull;
 final class ListIndexesObservableImpl<TResult> implements ListIndexesObservable<TResult> {
 
     private final com.mongodb.async.client.ListIndexesIterable<TResult> wrapped;
+    private final ObservableAdapter observableAdapter;
 
-    ListIndexesObservableImpl(final com.mongodb.async.client.ListIndexesIterable<TResult> wrapped) {
+    ListIndexesObservableImpl(final com.mongodb.async.client.ListIndexesIterable<TResult> wrapped,
+                              final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
+        this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
     @Override
@@ -42,7 +45,7 @@ final class ListIndexesObservableImpl<TResult> implements ListIndexesObservable<
 
     @Override
     public Observable<TResult> toObservable() {
-        return RxObservables.create(Observables.observe(wrapped));
+        return RxObservables.create(Observables.observe(wrapped), observableAdapter);
     }
 
     @Override

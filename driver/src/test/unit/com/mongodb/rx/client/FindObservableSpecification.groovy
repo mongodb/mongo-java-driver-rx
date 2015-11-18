@@ -75,7 +75,7 @@ class FindObservableSpecification extends Specification {
                 .partial(false)
         def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
                 ReadConcern.DEFAULT, executor, new Document('filter', 1), findOptions)
-        def findObservable = new FindObservableImpl<Document>(wrapped)
+        def findObservable = new FindObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
         findObservable.subscribe(subscriber)  // sets the batchSize
@@ -163,7 +163,7 @@ class FindObservableSpecification extends Specification {
         def executor = new TestOperationExecutor([cursor()]);
         def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, primary(), ReadConcern.DEFAULT,
                 executor, new Document(), new FindOptions())
-        def findObservable = new FindObservableImpl<Document>(wrapped)
+        def findObservable = new FindObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
         findObservable.first().subscribe(subscriber)
@@ -188,7 +188,7 @@ class FindObservableSpecification extends Specification {
         def findOptions = new FindOptions()
         def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
                 ReadConcern.DEFAULT, executor, new Document('filter', 1), findOptions)
-        def findObservable = new FindObservableImpl<Document>(wrapped)
+        def findObservable = new FindObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when:
         findObservable.filter(new Document('filter', 1))

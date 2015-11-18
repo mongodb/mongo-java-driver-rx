@@ -42,6 +42,14 @@ public interface MongoDatabase {
     String getName();
 
     /**
+     * Get the ObservableAdapter for the MongoDatabase.
+     *
+     * @return the {@link ObservableAdapter}
+     * @since 1.2
+     */
+    ObservableAdapter getObservableAdapter();
+
+    /**
      * Get the codec registry for the MongoDatabase.
      *
      * @return the {@link org.bson.codecs.configuration.CodecRegistry}
@@ -70,6 +78,15 @@ public interface MongoDatabase {
      * @mongodb.server.release 3.2
      */
     ReadConcern getReadConcern();
+
+    /**
+     * Create a new MongoDatabase instance with a different {@link ObservableAdapter}.
+     *
+     * @param observableAdapter the new {@link ObservableAdapter} for the database
+     * @return a new MongoDatabase instance with the different ObservableAdapter
+     * @since 1.2
+     */
+    MongoDatabase withObservableAdapter(ObservableAdapter observableAdapter);
 
     /**
      * Create a new MongoDatabase instance with a different codec registry.

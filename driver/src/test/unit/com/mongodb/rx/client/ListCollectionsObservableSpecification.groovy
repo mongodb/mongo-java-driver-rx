@@ -51,7 +51,7 @@ class ListCollectionsObservableSpecification extends Specification {
         def codecRegistry = fromProviders([new DocumentCodecProvider(), new BsonValueCodecProvider(), new ValueCodecProvider()])
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new com.mongodb.async.client.ListCollectionsIterableImpl('db', Document, codecRegistry, secondary(), executor)
-        def listCollectionObservable = new ListCollectionsObservableImpl<Document>(wrapped)
+        def listCollectionObservable = new ListCollectionsObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
         listCollectionObservable.subscribe(subscriber)

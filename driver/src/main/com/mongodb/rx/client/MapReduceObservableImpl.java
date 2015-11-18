@@ -33,11 +33,12 @@ import static com.mongodb.rx.client.ObservableHelper.voidToSuccessCallback;
 class MapReduceObservableImpl<TResult> implements MapReduceObservable<TResult> {
 
     private final com.mongodb.async.client.MapReduceIterable<TResult> wrapped;
+    private final ObservableAdapter observableAdapter;
 
-    MapReduceObservableImpl(final com.mongodb.async.client.MapReduceIterable<TResult> wrapped) {
+    MapReduceObservableImpl(final com.mongodb.async.client.MapReduceIterable<TResult> wrapped, final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
+        this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
-
 
     @Override
     public MapReduceObservable<TResult> collectionName(final String collectionName) {
@@ -130,12 +131,12 @@ class MapReduceObservableImpl<TResult> implements MapReduceObservable<TResult> {
             public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.toCollection(voidToSuccessCallback(callback));
             }
-        }));
+        }), observableAdapter);
     }
 
     @Override
     public Observable<TResult> toObservable() {
-        return RxObservables.create(Observables.observe(wrapped));
+        return RxObservables.create(Observables.observe(wrapped), observableAdapter);
     }
 
     @Override

@@ -32,9 +32,11 @@ import static com.mongodb.assertions.Assertions.notNull;
 class FindObservableImpl<TResult> implements FindObservable<TResult> {
 
     private final com.mongodb.async.client.FindIterable<TResult> wrapped;
+    private final ObservableAdapter observableAdapter;
 
-    FindObservableImpl(final com.mongodb.async.client.FindIterable<TResult> wrapped) {
+    FindObservableImpl(final com.mongodb.async.client.FindIterable<TResult> wrapped, final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
+        this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
     @Override
@@ -44,7 +46,7 @@ class FindObservableImpl<TResult> implements FindObservable<TResult> {
             public void apply(final SingleResultCallback<TResult> callback) {
                 wrapped.first(callback);
             }
-        }));
+        }), observableAdapter);
     }
 
     @Override
@@ -121,7 +123,7 @@ class FindObservableImpl<TResult> implements FindObservable<TResult> {
 
     @Override
     public Observable<TResult> toObservable() {
-        return RxObservables.create(Observables.observe(wrapped));
+        return RxObservables.create(Observables.observe(wrapped), observableAdapter);
     }
 
     @Override

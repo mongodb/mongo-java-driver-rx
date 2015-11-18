@@ -30,9 +30,11 @@ import static com.mongodb.assertions.Assertions.notNull;
 class DistinctObservableImpl<TResult> implements DistinctObservable<TResult> {
 
     private final com.mongodb.async.client.DistinctIterable<TResult> wrapped;
+    private final ObservableAdapter observableAdapter;
 
-    DistinctObservableImpl(final com.mongodb.async.client.DistinctIterable<TResult> wrapped) {
+    DistinctObservableImpl(final com.mongodb.async.client.DistinctIterable<TResult> wrapped, final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
+        this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
     @Override
@@ -49,7 +51,7 @@ class DistinctObservableImpl<TResult> implements DistinctObservable<TResult> {
 
     @Override
     public Observable<TResult> toObservable() {
-        return RxObservables.create(Observables.observe(wrapped));
+        return RxObservables.create(Observables.observe(wrapped), observableAdapter);
     }
 
     @Override

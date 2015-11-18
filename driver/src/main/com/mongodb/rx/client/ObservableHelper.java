@@ -17,6 +17,7 @@
 package com.mongodb.rx.client;
 
 import com.mongodb.async.SingleResultCallback;
+import rx.Observable;
 
 /**
  * A helper class for observables
@@ -39,6 +40,16 @@ final class ObservableHelper {
                 callback.onResult(Success.SUCCESS, t);
             }
         };
+    }
+
+    /**
+     * A simple noop ObservableAdapter
+     */
+    static class NoopObservableAdapter implements ObservableAdapter {
+        @Override
+        public <T> Observable<T> adapt(final Observable<T> observable) {
+            return observable;
+        }
     }
 
 }

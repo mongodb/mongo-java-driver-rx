@@ -53,7 +53,7 @@ class ListIndexesObservableSpecification extends Specification {
         def codecRegistry = fromProviders([new DocumentCodecProvider(), new BsonValueCodecProvider(), new ValueCodecProvider()])
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new ListIndexesIterableImpl(namespace, Document, codecRegistry, secondary(), executor)
-        def listIndexesObservable = new ListIndexesObservableImpl<Document>(wrapped)
+        def listIndexesObservable = new ListIndexesObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
         listIndexesObservable.subscribe(subscriber)

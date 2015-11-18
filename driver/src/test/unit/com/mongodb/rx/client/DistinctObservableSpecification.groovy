@@ -62,7 +62,7 @@ class DistinctObservableSpecification extends Specification {
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new DistinctIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
                 ReadConcern.DEFAULT, executor, 'field', new BsonDocument())
-        def distinctObservable = new DistinctObservableImpl(wrapped)
+        def distinctObservable = new DistinctObservableImpl(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
         distinctObservable.subscribe(subscriber)

@@ -28,9 +28,12 @@ import static com.mongodb.assertions.Assertions.notNull;
 class ListDatabasesObservableImpl<TResult> implements ListDatabasesObservable<TResult> {
 
     private final com.mongodb.async.client.ListDatabasesIterable<TResult> wrapped;
+    private final ObservableAdapter observableAdapter;
 
-    ListDatabasesObservableImpl(final com.mongodb.async.client.ListDatabasesIterable<TResult> wrapped) {
+    ListDatabasesObservableImpl(final com.mongodb.async.client.ListDatabasesIterable<TResult> wrapped,
+                                final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
+        this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
     @Override
@@ -42,7 +45,7 @@ class ListDatabasesObservableImpl<TResult> implements ListDatabasesObservable<TR
 
     @Override
     public Observable<TResult> toObservable() {
-        return RxObservables.create(Observables.observe(wrapped));
+        return RxObservables.create(Observables.observe(wrapped), observableAdapter);
     }
 
     @Override

@@ -70,6 +70,14 @@ public interface MongoCollection<TDocument> {
     Class<TDocument> getDocumentClass();
 
     /**
+     * Get the ObservableAdapter for this collection.
+     *
+     * @return the {@link ObservableAdapter}
+     * @since 1.2
+     */
+    ObservableAdapter getObservableAdapter();
+
+    /**
      * Get the codec registry for the MongoCollection.
      *
      * @return the {@link org.bson.codecs.configuration.CodecRegistry}
@@ -141,6 +149,15 @@ public interface MongoCollection<TDocument> {
      * @mongodb.server.release 3.2
      */
     MongoCollection<TDocument> withReadConcern(ReadConcern readConcern);
+
+    /**
+     * Create a new MongoCollection instance with a different {@link ObservableAdapter}.
+     *
+     * @param observableAdapter the new {@link ObservableAdapter} for the collection
+     * @return a new MongoCollection instance with the different ObservableAdapter
+     * @since 1.2
+     */
+    MongoCollection<TDocument> withObservableAdapter(ObservableAdapter observableAdapter);
 
     /**
      * Counts the number of documents in the collection.

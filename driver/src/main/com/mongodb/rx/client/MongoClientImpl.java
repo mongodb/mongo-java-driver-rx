@@ -25,14 +25,16 @@ import static com.mongodb.assertions.Assertions.notNull;
 
 class MongoClientImpl implements MongoClient {
     private final com.mongodb.async.client.MongoClient wrapped;
+    private final ObservableAdapter observableAdapter;
 
-    MongoClientImpl(final com.mongodb.async.client.MongoClient wrapped) {
+    MongoClientImpl(final com.mongodb.async.client.MongoClient wrapped, final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
+        this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
     @Override
     public MongoDatabase getDatabase(final String name) {
-        return new MongoDatabaseImpl(wrapped.getDatabase(name));
+        return new MongoDatabaseImpl(wrapped.getDatabase(name), observableAdapter);
     }
 
     @Override
@@ -47,7 +49,7 @@ class MongoClientImpl implements MongoClient {
 
     @Override
     public Observable<String> listDatabaseNames() {
-        return RxObservables.create(Observables.observe(wrapped.listDatabaseNames()));
+        return RxObservables.create(Observables.observe(wrapped.listDatabaseNames()), observableAdapter);
     }
 
     @Override
@@ -57,6 +59,6 @@ class MongoClientImpl implements MongoClient {
 
     @Override
     public <TResult> ListDatabasesObservable<TResult> listDatabases(final Class<TResult> clazz) {
-        return new ListDatabasesObservableImpl<TResult>(wrapped.listDatabases(clazz));
+        return new ListDatabasesObservableImpl<TResult>(wrapped.listDatabases(clazz), observableAdapter);
     }
 }

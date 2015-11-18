@@ -64,7 +64,7 @@ class MapReduceObservableSpecification extends Specification {
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new MapReduceIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
                 ReadConcern.DEFAULT, executor, 'map', 'reduce')
-        def mapReduceObservable = new MapReduceObservableImpl(wrapped)
+        def mapReduceObservable = new MapReduceObservableImpl(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
         mapReduceObservable.subscribe(subscriber)
@@ -114,7 +114,7 @@ class MapReduceObservableSpecification extends Specification {
         def collectionNamespace = new MongoNamespace('dbName', 'collName')
         def wrapped = new MapReduceIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
                 ReadConcern.DEFAULT, executor, 'map', 'reduce')
-        def mapReduceObservable = new MapReduceObservableImpl(wrapped)
+        def mapReduceObservable = new MapReduceObservableImpl(wrapped, new ObservableHelper.NoopObservableAdapter())
         mapReduceObservable.collectionName(collectionNamespace.getCollectionName())
                 .databaseName(collectionNamespace.getDatabaseName())
                 .filter(new Document('filter', 1))

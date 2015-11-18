@@ -49,7 +49,7 @@ class ListDatabasesObservableSpecification extends Specification {
         def codecRegistry = fromProviders([new DocumentCodecProvider()])
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new WrappedListDatabasesIterableImpl(Document, codecRegistry, secondary(), executor)
-        def listDatabasesObservable = new ListDatabasesObservableImpl<Document>(wrapped)
+        def listDatabasesObservable = new ListDatabasesObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
         listDatabasesObservable.subscribe(subscriber)

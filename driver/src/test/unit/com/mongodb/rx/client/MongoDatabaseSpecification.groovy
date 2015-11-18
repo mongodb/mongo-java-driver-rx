@@ -33,6 +33,7 @@ import static spock.util.matcher.HamcrestSupport.expect
 
 class MongoDatabaseSpecification extends Specification {
 
+    def observableAdapter = new ObservableHelper.NoopObservableAdapter()
     def subscriber = {
         def subscriber = new TestSubscriber()
         subscriber.requestMore(1)
@@ -41,8 +42,9 @@ class MongoDatabaseSpecification extends Specification {
 
     def 'should have the same methods as the wrapped MongoDatabase'() {
         given:
+        def exclusions = ['getObservableAdapter', 'withObservableAdapter']
         def wrapped = WrappedMongoDatabase.methods*.name.sort()
-        def local = MongoDatabase.methods*.name.sort()
+        def local = MongoDatabase.methods*.name.sort() - exclusions
 
         expect:
         wrapped == local
@@ -55,25 +57,25 @@ class MongoDatabaseSpecification extends Specification {
             getCollection(_) >> wrappedCollection
             getCollection(_, _) >> wrappedCollection
         }
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         def collection = mongoDatabase.getCollection('collectionName')
 
         then:
-        expect collection, isTheSameAs(new MongoCollectionImpl(wrappedCollection))
+        expect collection, isTheSameAs(new MongoCollectionImpl(wrappedCollection, observableAdapter))
 
         when:
         collection = mongoDatabase.getCollection('collectionName', Document)
 
         then:
-        expect collection, isTheSameAs(new MongoCollectionImpl(wrappedCollection))
+        expect collection, isTheSameAs(new MongoCollectionImpl(wrappedCollection, observableAdapter))
     }
 
     def 'should call the underlying getName'() {
         given:
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.getName()
@@ -85,7 +87,7 @@ class MongoDatabaseSpecification extends Specification {
     def 'should call the underlying getCodecRegistry'() {
         given:
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.getCodecRegistry()
@@ -96,7 +98,7 @@ class MongoDatabaseSpecification extends Specification {
     def 'should call the underlying getReadPreference'() {
         given:
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.getReadPreference()
@@ -108,7 +110,7 @@ class MongoDatabaseSpecification extends Specification {
     def 'should call the underlying getWriteConcern'() {
         given:
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.getWriteConcern()
@@ -120,7 +122,7 @@ class MongoDatabaseSpecification extends Specification {
     def 'should call the underlying getReadConcern'() {
         given:
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.getReadConcern()
@@ -136,13 +138,13 @@ class MongoDatabaseSpecification extends Specification {
         def wrapped = Mock(WrappedMongoDatabase) {
             1 * withCodecRegistry(codecRegistry) >> wrappedResult
         }
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoDatabase.withCodecRegistry(codecRegistry)
 
         then:
-        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying withReadPreference'() {
@@ -152,13 +154,13 @@ class MongoDatabaseSpecification extends Specification {
         def wrapped = Mock(WrappedMongoDatabase) {
             1 * withReadPreference(readPreference) >> wrappedResult
         }
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoDatabase.withReadPreference(readPreference)
 
         then:
-        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying withWriteConcern'() {
@@ -168,13 +170,13 @@ class MongoDatabaseSpecification extends Specification {
         def wrapped = Mock(WrappedMongoDatabase) {
             1 * withWriteConcern(writeConcern) >> wrappedResult
         }
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoDatabase.withWriteConcern(writeConcern)
 
         then:
-        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying withReadConcern'() {
@@ -184,19 +186,19 @@ class MongoDatabaseSpecification extends Specification {
         def wrapped = Mock(WrappedMongoDatabase) {
             1 * withReadConcern(readConcern) >> wrappedResult
         }
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         def result = mongoDatabase.withReadConcern(readConcern)
 
         then:
-        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult))
+        expect result, isTheSameAs(new MongoDatabaseImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying runCommand when writing'() {
         given:
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.runCommand(new Document())
@@ -220,7 +222,7 @@ class MongoDatabaseSpecification extends Specification {
         given:
         def readPreference = Stub(ReadPreference)
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.runCommand(new Document(), readPreference)
@@ -244,7 +246,7 @@ class MongoDatabaseSpecification extends Specification {
     def 'should call the underlying drop'() {
         given:
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.drop()
@@ -261,7 +263,7 @@ class MongoDatabaseSpecification extends Specification {
     def 'should call the underlying listCollectionNames'() {
         given:
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.listCollectionNames()
@@ -277,26 +279,26 @@ class MongoDatabaseSpecification extends Specification {
             1 * listCollections(Document) >> wrappedResult
             1 * listCollections(BsonDocument) >> wrappedResult
         }
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         def observable = mongoDatabase.listCollections()
 
         then:
-        expect observable, isTheSameAs(new ListCollectionsObservableImpl(wrappedResult))
+        expect observable, isTheSameAs(new ListCollectionsObservableImpl(wrappedResult, observableAdapter))
 
         when:
         observable = mongoDatabase.listCollections(BsonDocument)
 
         then:
-        expect observable, isTheSameAs(new ListCollectionsObservableImpl(wrappedResult))
+        expect observable, isTheSameAs(new ListCollectionsObservableImpl(wrappedResult, observableAdapter))
     }
 
     def 'should call the underlying createCollection'() {
         given:
         def createCollectionOptions = Stub(CreateCollectionOptions)
         def wrapped = Mock(WrappedMongoDatabase)
-        def mongoDatabase = new MongoDatabaseImpl(wrapped)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
 
         when:
         mongoDatabase.createCollection('collectionName')

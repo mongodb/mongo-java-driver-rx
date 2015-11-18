@@ -62,7 +62,7 @@ class AggregateObservableSpecification extends Specification {
         def pipeline = [new Document('$match', 1)]
         def wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
                 ReadConcern.DEFAULT, executor, pipeline)
-        def aggregateObservable = new AggregateObservableImpl<Document>(wrapped)
+        def aggregateObservable = new AggregateObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
         aggregateObservable.subscribe(subscriber)
@@ -99,7 +99,7 @@ class AggregateObservableSpecification extends Specification {
         def pipeline = [new Document('$match', 1), new Document('$out', collectionName)]
         def wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
                 ReadConcern.DEFAULT, executor, pipeline)
-        def aggregateObservable = new AggregateObservableImpl<Document>(wrapped)
+        def aggregateObservable = new AggregateObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
                 .maxTime(999, MILLISECONDS)
                 .allowDiskUse(true)
                 .useCursor(true)
@@ -126,7 +126,8 @@ class AggregateObservableSpecification extends Specification {
         when: 'toCollection should work as expected'
         wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
                 ReadConcern.DEFAULT, executor, pipeline)
-        new AggregateObservableImpl<Document>(wrapped).toCollection().subscribe(new TestSubscriber())
+        new AggregateObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter()).toCollection().subscribe(
+                new TestSubscriber())
         operation = executor.getWriteOperation() as AggregateToCollectionOperation
 
         then:

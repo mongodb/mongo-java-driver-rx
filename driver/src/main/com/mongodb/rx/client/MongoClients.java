@@ -19,6 +19,7 @@ package com.mongodb.rx.client;
 import com.mongodb.ConnectionString;
 import com.mongodb.async.client.MongoClientSettings;
 
+import static com.mongodb.rx.client.ObservableHelper.NoopObservableAdapter;
 
 /**
  * A factory for MongoClient instances.
@@ -42,7 +43,19 @@ public final class MongoClients {
      * @return the client
      */
     public static MongoClient create(final MongoClientSettings settings) {
-        return new MongoClientImpl(com.mongodb.async.client.MongoClients.create(settings));
+        return create(settings, new NoopObservableAdapter());
+    }
+
+    /**
+     * Create a new client with the given client settings.
+     *
+     * @param settings the settings
+     * @param observableAdapter the {@link ObservableAdapter} to adapt all {@code Observables}
+     * @return the client
+     * @since 1.2
+     */
+    public static MongoClient create(final MongoClientSettings settings, final ObservableAdapter observableAdapter) {
+        return new MongoClientImpl(com.mongodb.async.client.MongoClients.create(settings), observableAdapter);
     }
 
     /**
@@ -58,11 +71,35 @@ public final class MongoClients {
     /**
      * Create a new client with the given connection string.
      *
+     * @param connectionString the connection
+     * @param observableAdapter the {@link ObservableAdapter} to adapt all {@code Observables}
+     * @return the client
+     * @since 1.2
+     */
+    public static MongoClient create(final String connectionString, final ObservableAdapter observableAdapter) {
+        return create(new ConnectionString(connectionString), observableAdapter);
+    }
+
+    /**
+     * Create a new client with the given connection string.
+     *
      * @param connectionString the settings
      * @return the client
      */
     public static MongoClient create(final ConnectionString connectionString) {
-        return new MongoClientImpl(com.mongodb.async.client.MongoClients.create(connectionString));
+        return create(connectionString, new NoopObservableAdapter());
+    }
+
+    /**
+     * Create a new client with the given connection string.
+     *
+     * @param connectionString the settings
+     * @param observableAdapter the {@link ObservableAdapter} to adapt all {@code Observables}.
+     * @return the client
+     * @since 1.2
+     */
+    public static MongoClient create(final ConnectionString connectionString, final ObservableAdapter observableAdapter) {
+        return new MongoClientImpl(com.mongodb.async.client.MongoClients.create(connectionString), observableAdapter);
     }
 
     private MongoClients() {

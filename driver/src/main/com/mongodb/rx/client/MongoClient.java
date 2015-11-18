@@ -35,6 +35,7 @@ import java.io.Closeable;
  */
 @Immutable
 public interface MongoClient extends Closeable {
+
     /**
      * Gets the database with the given name.
      *
