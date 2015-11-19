@@ -16,6 +16,7 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.MongoException;
 import com.mongodb.async.client.Observable;
 import com.mongodb.async.client.Observer;
 import com.mongodb.async.client.Subscription;
@@ -89,7 +90,11 @@ final class RxObservables {
         @Override
         public void request(final long n) {
             if (isSubscribed()) {
-                subscription.request(n);
+                try {
+                    subscription.request(n);
+                } catch (Throwable t) {
+                    rxSubscriber.onError(t);
+                }
             }
         }
 

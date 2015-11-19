@@ -16,6 +16,7 @@
 
 package com.mongodb.rx.client
 
+import com.mongodb.MongoException
 import com.mongodb.MongoNamespace
 import com.mongodb.client.model.IndexModel
 import com.mongodb.diagnostics.logging.Loggers
@@ -28,6 +29,7 @@ import rx.schedulers.Schedulers
 import java.util.concurrent.atomic.AtomicInteger
 
 import static Fixture.getMongoClient
+import static com.mongodb.rx.client.Fixture.getConnectionString
 import static java.util.concurrent.TimeUnit.SECONDS
 
 class SmokeTestSpecification extends FunctionalSpecification {
@@ -177,6 +179,20 @@ class SmokeTestSpecification extends FunctionalSpecification {
         then:
         run('find that document', collection.find().first()).head() == document
 
+    }
+
+    def 'should not leak exceptions when a client is closed'() {
+        given:
+        def mongoClient = MongoClients.create(getConnectionString())
+        def subscriber = new TestSubscriber()
+
+        when:
+        mongoClient.close()
+        mongoClient.listDatabaseNames().subscribe(subscriber)
+        subscriber.awaitTerminalEvent()
+
+        then:
+        subscriber.assertError(MongoException)
     }
 
     @SuppressWarnings('BusyWait')
