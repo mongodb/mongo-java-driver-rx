@@ -22,7 +22,7 @@ import com.mongodb.async.client.Observer
 import com.mongodb.async.client.Subscription
 import rx.Subscriber
 import rx.observers.TestSubscriber
-import rx.schedulers.Schedulers
+import rx.schedulers.TestScheduler
 import spock.lang.Specification
 
 class RxObservablesSpecification extends Specification {
@@ -67,7 +67,6 @@ class RxObservablesSpecification extends Specification {
         requested
         subscriber.assertNoErrors()
         subscriber.assertTerminalEvent()
-        subscriber.getLastSeenThread() == Thread.currentThread()
     }
 
     def 'should pass Observer.onNext values to Subscriber.onNext'() {
@@ -299,10 +298,7 @@ class RxObservablesSpecification extends Specification {
 
     def 'should use the passed ObserverAdapter to adapt the resulting Observer'() {
         given:
-        def subscriber = new TestSubscriber(3)
-        def scheduler = Schedulers.newThread()
-
-        when:
+        def scheduler = new TestScheduler()
         def observer = RxObservables.create(new Observable() {
             @Override
             void subscribe(final Observer observer) {
@@ -327,11 +323,20 @@ class RxObservablesSpecification extends Specification {
             def <T> rx.Observable<T> adapt(final rx.Observable<T> observable) {
                 observable.observeOn(scheduler);
             }
-        }).subscribe(subscriber)
-        subscriber.awaitTerminalEvent()
+        })
+        def subscriber = new TestSubscriber(0)
+
+        when:
+        observer.subscribe(subscriber)
+        subscriber.requestMore(3)
+
+        then:
+        subscriber.assertReceivedOnNext([])
+
+        when:
+        scheduler.triggerActions()
 
         then:
         subscriber.assertReceivedOnNext(['onNext called', 'onNext called', 'onNext called'])
-        subscriber.getLastSeenThread() != Thread.currentThread()
     }
 }
