@@ -84,7 +84,6 @@ final class RxObservables {
                 }
             });
             rxSubscriber.setProducer(this);
-            rxSubscriber.onStart();
         }
 
         @Override

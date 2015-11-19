@@ -20,6 +20,7 @@ import com.mongodb.MongoException
 import com.mongodb.async.client.Observable
 import com.mongodb.async.client.Observer
 import com.mongodb.async.client.Subscription
+import rx.Subscriber
 import rx.observers.TestSubscriber
 import rx.schedulers.Schedulers
 import spock.lang.Specification
@@ -146,6 +147,54 @@ class RxObservablesSpecification extends Specification {
         then:
         errored
         subscriber.assertTerminalEvent()
+    }
+
+    def 'should only call Subscriber.onStart() once'() {
+        given:
+        def onStartCount = 0
+
+        when:
+        RxObservables.create(new Observable() {
+            @Override
+            void subscribe(final Observer observer) {
+                observer.onSubscribe(new Subscription() {
+                    @Override
+                    void request(final long n) {
+                        observer.onComplete()
+                    }
+
+                    @Override
+                    void unsubscribe() {
+                    }
+
+                    @Override
+                    boolean isUnsubscribed() {
+                        false
+                    }
+                })
+            }
+        }, observableAdapter).subscribe(new Subscriber() {
+            @Override
+            void onStart() {
+                onStartCount += 1
+                request(1)
+            }
+
+            @Override
+            void onCompleted() {
+            }
+
+            @Override
+            void onError(final Throwable e) {
+            }
+
+            @Override
+            void onNext(final Object o) {
+            }
+        })
+
+        then:
+        onStartCount == 1
     }
 
     def 'should trigger Subscriber.onComplete when Observer.onComplete is called'() {
