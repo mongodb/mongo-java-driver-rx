@@ -16,7 +16,6 @@
 
 package com.mongodb.rx.client
 
-import com.mongodb.MongoException
 import com.mongodb.MongoNamespace
 import com.mongodb.client.model.IndexModel
 import com.mongodb.diagnostics.logging.Loggers
@@ -192,7 +191,7 @@ class SmokeTestSpecification extends FunctionalSpecification {
         subscriber.awaitTerminalEvent()
 
         then:
-        subscriber.assertError(MongoException)
+        subscriber.assertError(IllegalStateException)
     }
 
     @SuppressWarnings('BusyWait')
