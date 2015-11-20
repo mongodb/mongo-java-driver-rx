@@ -8,8 +8,10 @@ import rx.Observable;
  * <p>By default this is a noop but it maybe useful if wanting to switch schedulers by combining with
  *  <a href="http://reactivex.io/documentation/operators/observeon.html">ObserveOn</a>.
  * </p>
+ *
+ * @since 1.2
  */
-interface ObservableAdapter {
+public interface ObservableAdapter {
     /**
      * Performs any adapations to the underlying observable
      *
