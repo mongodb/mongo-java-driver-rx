@@ -62,7 +62,7 @@ mongoClient.getDatabase("databaseToBeDropped").drop().toBlocking().single();
 ## Create A Collection
 
 Collections in MongoDB are created automatically simply by inserted a document into it. Using the 
-[`createCollection`]({{< apiref "com/mongodb/reactivestreams/client/mongoDatabase.html#createCollection-java.lang.String-com.mongodb.async.SingleResultCallback-">}}) method, 
+[`createCollection`]({{< apiref "com/mongodb/rx/client/mongoDatabase.html#createCollection-java.lang.String">}}) method, 
 you can also create a collection explicitly in order to customize its configuration. For example, to create a capped collection sized to 1 megabyte:
 
 ```java

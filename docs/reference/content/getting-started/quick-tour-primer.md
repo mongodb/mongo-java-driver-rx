@@ -35,7 +35,7 @@ The API mirrors the Async driver API and any methods that cause network IO retur
 where `T` is the type of response for the operation.  
 The exception to that rule is for methods in the async driver that return a `Void` value in the callback. 
 As an `Observable<Void>` is generally considered bad practise, in these circumstances we
-return a [`Observable<Success>`]({{< apiref "com/mongodb/reactivestreams/client/Success.html">}}) for the operation.
+return a [`Observable<Success>`]({{< apiref "com/mongodb/rx/client/Success.html">}}) for the operation.
 
 ### MongoObservable
 
@@ -46,8 +46,9 @@ In RxJava `Observable` is not an interface, so where the MongoDB Async Driver AP
 
     Returns an `Observable<T>` instance for the operation.
 
-2.
-method to convert into an `Observable`.
+2. `subscribe(Subscriber<? super TResult> subscriber)`
+
+    Subscribes to the `Observable`.
 
 {{% note %}}
 All [`Observables`](http://reactivex.io/RxJava/javadoc/rx/Observable.html) returned 

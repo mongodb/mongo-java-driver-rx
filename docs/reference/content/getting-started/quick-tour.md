@@ -27,7 +27,7 @@ This guide uses the `Subscriber` implementations as covered in the [Quick Tour P
 ## Make a Connection
 
 The following example shows multiple ways to connect to the database `mydb` on the local machine, using the 
-[`MongoClients.create`]({{< apiref "com/mongodb/reactivestreams/client/MongoClients.html#create-com.mongodb.ConnectionString-" >}}) helper.
+[`MongoClients.create`]({{< apiref "com/mongodb/rx/client/MongoClients.html#create-com.mongodb.ConnectionString-" >}}) helper.
 
 
 ```java
@@ -78,7 +78,7 @@ cluster and use it across your application. When creating multiple instances:
 ## Get a Collection
 
 To get a collection to operate upon, specify the name of the collection to
-the [`getCollection(String collectionName)`]({{< apiref "com/mongodb/reactivestreams/client/MongoDatabase.html#getCollection-java.lang.String-">}})
+the [`getCollection(String collectionName)`]({{< apiref "com/mongodb/rx/client/MongoDatabase.html#getCollection-java.lang.String-">}})
 method:
 
 The following example gets the collection `test`:
@@ -193,7 +193,7 @@ been  inserted into the database!
 
 Now that we've inserted 101 documents (the 100 we did in the loop, plus
 the first one), we can check to see if we have them all using the
-[count()]({{< apiref "com/mongodb/reactivestreams/client/mongoCollection#count--">}})
+[count()]({{< apiref "com/mongodb/rx/client/mongoCollection#count--">}})
 method. The following code should print `101`.
 
 ```java
@@ -204,7 +204,7 @@ subscriber.awaitTerminalEvent();
 
 ## Query the Collection
 
-Use the [find()]({{< apiref "com/mongodb/reactivestreams/client/MongoCollection.html#find--">}})
+Use the [find()]({{< apiref "com/mongodb/rx/client/MongoCollection.html#find--">}})
 method to query the collection.
 
 ### Find the First Document in a Collection
@@ -212,8 +212,8 @@ method to query the collection.
 call the first() method on the result of the find() of method
 
 To get the first document in the collection, call the
-[first()]({{< apiref "com/mongodb/reactivestreams/client/MongoIterable.html#first--">}})
-method on the [find()]({{< apiref "com/mongodb/reactivestreams/client/MongoCollection.html#find--">}})
+[first()]({{< apiref "com/mongodb/rx/client/MongoIterable.html#first--">}})
+method on the [find()]({{< apiref "com/mongodb/rx/client/MongoCollection.html#find--">}})
 operation. `collection.find().first()` returns the first document or if no document is found the `Observable` just completes.
 This is useful for queries that should only match a single document, or if you are interested in the first document only.
 
@@ -319,7 +319,7 @@ collection.find().projection(excludeId()).subscribe(printDocumentSubscriber());
 There are numerous [update operators](http://docs.mongodb.org/manual/reference/operator/update-field/)
 supported by MongoDB.
 
-To update at most a single document (may be 0 if none match the filter), use the [`updateOne`]({{< apiref "com/mongodb/reactivestreams/client/MongoCollection.html#updateOne-org.bson.conversions.Bson-org.bson.conversions.Bson-">}})
+To update at most a single document (may be 0 if none match the filter), use the [`updateOne`]({{< apiref "com/mongodb/rx/client/MongoCollection.html#updateOne-org.bson.conversions.Bson-org.bson.conversions.Bson-">}})
 method to specify the filter and the update document.  Here we update the first document that meets the filter `i` equals `10` and set the value of `i` to `110`:
 
 ```java
@@ -327,7 +327,7 @@ collection.updateOne(eq("i", 10), new Document("$set", new Document("i", 110)))
           .subscribe(printSubscriber("Update Result: %s"));
 ```
 
-To update all documents matching the filter use the [`updateMany`]({{< apiref "com/mongodb/reactivestreams/client/MongoCollection.html#updateMany-org.bson.conversions.Bson-org.bson.conversions.Bson-">}})
+To update all documents matching the filter use the [`updateMany`]({{< apiref "com/mongodb/rx/client/MongoCollection.html#updateMany-org.bson.conversions.Bson-org.bson.conversions.Bson-">}})
 method.  Here we increment the value of `i` by `100` where `i`
 is less than `100`.
 
@@ -341,7 +341,7 @@ which provides information about the operation including the number of documents
 
 ## Deleting documents
 
-To delete at most a single document (may be 0 if none match the filter) use the [`deleteOne`]({{< apiref "com/mongodb/reactivestreams/client/MongoCollection.html#deleteOne-org.bson.conversions.Bson-">}})
+To delete at most a single document (may be 0 if none match the filter) use the [`deleteOne`]({{< apiref "com/mongodb/rx/client/MongoCollection.html#deleteOne-org.bson.conversions.Bson-">}})
 method:
 
 ```java
@@ -349,7 +349,7 @@ collection.deleteOne(eq("i", 110))
           .subscribe(printSubscriber("Delete Result: %s"));
 ```
 
-To delete all documents matching the filter use the [`deleteMany`]({{< apiref "com/mongodb/reactivestreams/client/MongoCollection.html#deleteMany-org.bson.conversions.Bson-">}}) method.  
+To delete all documents matching the filter use the [`deleteMany`]({{< apiref "com/mongodb/rx/client/MongoCollection.html#deleteMany-org.bson.conversions.Bson-">}}) method.  
 Here we delete all documents where `i` is greater or equal to `100`:
 
 ```java
