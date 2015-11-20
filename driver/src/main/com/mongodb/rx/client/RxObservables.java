@@ -16,11 +16,9 @@
 
 package com.mongodb.rx.client;
 
-import com.mongodb.MongoException;
 import com.mongodb.async.client.Observable;
 import com.mongodb.async.client.Observer;
 import com.mongodb.async.client.Subscription;
-
 import rx.Producer;
 import rx.Subscriber;
 
