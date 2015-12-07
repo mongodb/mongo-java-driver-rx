@@ -17,7 +17,7 @@ Changes between released versions
 
   * Updated MongoDB Driver Async to 3.2.0
     
-  * Updated RxJava to 1.0.16
+  * Updated RxJava to 1.0.17
   
   * Added `ObservableAdapter` to allow for custom adapters for `Observable`, such as customizing Scheduler threads.
   

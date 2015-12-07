@@ -1,16 +1,16 @@
 driverName = "mongodb-driver-rx"
 githubRepo = "mongodb-driver-rx"
-current = "1.1.0"
+current = "1.2.0"
 
 [[versions]]
-  version = "1.2.0-rc0"
+  status = "current"
+  version = "1.2.0"
   docs = "./1.2"
   api = "./1.2/javadoc"
 
 [[versions]]
   version = "1.1.0"
   docs = "./1.1"
-  status = "current"
   api = "./1.1/javadoc"
 
 [[versions]]
