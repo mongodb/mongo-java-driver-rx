@@ -29,6 +29,25 @@ task uberJar(type: Jar) {
     from sourceSets.main.output
 }
 
+def getGitVersion() {
+    def outputAsString
+    new ByteArrayOutputStream().withStream { os ->
+        def result = exec {
+            executable 'git'
+            args 'describe', '--tags', '--always', '--dirty'
+            standardOutput = os
+        }
+        outputAsString = os.toString().substring(1).trim()
+    }
+    return outputAsString
+}
+
+jar {
+    manifest {
+        instruction 'Build-Version', getGitVersion()
+    }
+}
+
 modifyPom {
     project {
         name 'MongoDB RX Driver'

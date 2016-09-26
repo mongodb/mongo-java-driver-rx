@@ -17,6 +17,7 @@
 package com.mongodb.rx.client
 
 import com.mongodb.MongoNamespace
+import com.mongodb.client.MongoDriverInformation
 import com.mongodb.client.model.IndexModel
 import com.mongodb.diagnostics.logging.Loggers
 import org.bson.Document
@@ -192,6 +193,17 @@ class SmokeTestSpecification extends FunctionalSpecification {
 
         then:
         subscriber.assertError(IllegalStateException)
+    }
+
+    def 'should accept custom MongoDriverInformation'() {
+        when:
+        def driverInformation = MongoDriverInformation.builder().driverName('test').driverVersion('1.2.0').build()
+
+        then:
+        def client = MongoClients.create(getConnectionString(), new ObservableHelper.NoopObservableAdapter(), driverInformation)
+
+        cleanup:
+        client?.close()
     }
 
     @SuppressWarnings('BusyWait')

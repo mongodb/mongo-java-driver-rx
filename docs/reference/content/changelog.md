@@ -20,6 +20,7 @@ Changes between released versions
   * Updated RxJava to 1.2.0 [JAVARX-33](https://jira.mongodb.org/browse/JAVARX-33)
   * Added support for views [JAVARX-32](https://jira.mongodb.org/browse/JAVARX-32)
   * Added Collation support [JAVARX-31](https://jira.mongodb.org/browse/JAVARX-31)
+  * Added support for extending handshake metadata [JAVARX-29](https://jira.mongodb.org/browse/JAVARX-29)
 
 ### 1.2 
 
