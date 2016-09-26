@@ -18,6 +18,7 @@ package com.mongodb.rx.client
 
 import com.mongodb.MongoNamespace
 import com.mongodb.ReadConcern
+import com.mongodb.WriteConcern
 import com.mongodb.async.client.AggregateIterableImpl
 import com.mongodb.async.client.MongoIterable
 import com.mongodb.operation.AggregateOperation
@@ -47,7 +48,7 @@ class AggregateObservableSpecification extends Specification {
 
     def 'should have the same methods as the wrapped AggregateIterable'() {
         given:
-        def wrapped = (com.mongodb.async.client.AggregateIterable.methods*.name - MongoIterable.methods*.name).sort()
+        def wrapped = (com.mongodb.async.client.AggregateIterable.methods*.name - MongoIterable.methods*.name).sort() - 'collation'
         def local = (AggregateObservable.methods*.name - MongoObservable.methods*.name - 'batchSize').sort()
 
         expect:
@@ -56,12 +57,11 @@ class AggregateObservableSpecification extends Specification {
 
     def 'should build the expected AggregateOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def executor = new TestOperationExecutor([null, null]);
         def pipeline = [new Document('$match', 1)]
         def wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
-                ReadConcern.DEFAULT, executor, pipeline)
+                ReadConcern.DEFAULT, WriteConcern.ACKNOWLEDGED, executor, pipeline)
         def aggregateObservable = new AggregateObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
@@ -76,8 +76,7 @@ class AggregateObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
-        subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        subscriber = new TestSubscriber(100)
         aggregateObservable.maxTime(999, MILLISECONDS).useCursor(true).subscribe(subscriber)
         operation = executor.getReadOperation() as AggregateOperation<Document>
 
@@ -91,14 +90,13 @@ class AggregateObservableSpecification extends Specification {
 
     def 'should build the expected AggregateToCollectionOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def executor = new TestOperationExecutor([null, null, null, null, null]);
         def collectionName = 'collectionName'
         def collectionNamespace = new MongoNamespace(namespace.getDatabaseName(), collectionName)
         def pipeline = [new Document('$match', 1), new Document('$out', collectionName)]
         def wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
-                ReadConcern.DEFAULT, executor, pipeline)
+                ReadConcern.DEFAULT, WriteConcern.ACKNOWLEDGED, executor, pipeline)
         def aggregateObservable = new AggregateObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
                 .maxTime(999, MILLISECONDS)
                 .allowDiskUse(true)
@@ -111,7 +109,8 @@ class AggregateObservableSpecification extends Specification {
 
         then: 'should use the overrides'
         expect operation, isTheSameAs(new AggregateToCollectionOperation(namespace,
-                [new BsonDocument('$match', new BsonInt32(1)), new BsonDocument('$out', new BsonString(collectionName))])
+                [new BsonDocument('$match', new BsonInt32(1)), new BsonDocument('$out', new BsonString(collectionName))],
+                WriteConcern.ACKNOWLEDGED)
                 .maxTime(999, MILLISECONDS)
                 .allowDiskUse(true)
                 .bypassDocumentValidation(true))
@@ -125,14 +124,15 @@ class AggregateObservableSpecification extends Specification {
 
         when: 'toCollection should work as expected'
         wrapped = new AggregateIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
-                ReadConcern.DEFAULT, executor, pipeline)
+                ReadConcern.DEFAULT, WriteConcern.ACKNOWLEDGED, executor, pipeline)
         new AggregateObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter()).toCollection().subscribe(
                 new TestSubscriber())
         operation = executor.getWriteOperation() as AggregateToCollectionOperation
 
         then:
         expect operation, isTheSameAs(new AggregateToCollectionOperation(namespace,
-                [new BsonDocument('$match', new BsonInt32(1)), new BsonDocument('$out', new BsonString(collectionName))]))
+                [new BsonDocument('$match', new BsonInt32(1)), new BsonDocument('$out', new BsonString(collectionName))],
+                WriteConcern.ACKNOWLEDGED))
     }
 
 }

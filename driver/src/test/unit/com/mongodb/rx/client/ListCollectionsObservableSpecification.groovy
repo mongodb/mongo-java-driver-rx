@@ -46,8 +46,7 @@ class ListCollectionsObservableSpecification extends Specification {
 
     def 'should build the expected listCollectionOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def codecRegistry = fromProviders([new DocumentCodecProvider(), new BsonValueCodecProvider(), new ValueCodecProvider()])
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new com.mongodb.async.client.ListCollectionsIterableImpl('db', Document, codecRegistry, secondary(), executor)
@@ -64,8 +63,7 @@ class ListCollectionsObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
-        subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        subscriber = new TestSubscriber(100)
         listCollectionObservable.filter(new Document('filter', 2)).maxTime(999, MILLISECONDS).subscribe(subscriber)
 
         operation = executor.getReadOperation() as ListCollectionsOperation<Document>

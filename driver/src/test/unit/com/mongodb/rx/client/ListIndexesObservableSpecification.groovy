@@ -47,8 +47,7 @@ class ListIndexesObservableSpecification extends Specification {
 
     def 'should build the expected listIndexesOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def namespace = new MongoNamespace('db', 'coll')
         def codecRegistry = fromProviders([new DocumentCodecProvider(), new BsonValueCodecProvider(), new ValueCodecProvider()])
         def executor = new TestOperationExecutor([null, null]);
@@ -66,8 +65,7 @@ class ListIndexesObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
-        subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        subscriber = new TestSubscriber(100)
         listIndexesObservable
                 .maxTime(999, MILLISECONDS)
                 .subscribe(subscriber)

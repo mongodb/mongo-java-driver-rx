@@ -20,8 +20,10 @@ import com.mongodb.async.client.ListDatabasesIterableImpl as WrappedListDatabase
 import com.mongodb.async.client.MongoIterable
 import com.mongodb.operation.ListDatabasesOperation
 import org.bson.Document
+import org.bson.codecs.BsonValueCodecProvider
 import org.bson.codecs.DocumentCodec
 import org.bson.codecs.DocumentCodecProvider
+import org.bson.codecs.ValueCodecProvider
 import rx.observers.TestSubscriber
 import spock.lang.Specification
 
@@ -44,9 +46,8 @@ class ListDatabasesObservableSpecification extends Specification {
 
     def 'should build the expected ListDatabasesOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
-        def codecRegistry = fromProviders([new DocumentCodecProvider()])
+        def subscriber = new TestSubscriber(100)
+        def codecRegistry = fromProviders([new DocumentCodecProvider(), new BsonValueCodecProvider(), new ValueCodecProvider()])
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new WrappedListDatabasesIterableImpl(Document, codecRegistry, secondary(), executor)
         def listDatabasesObservable = new ListDatabasesObservableImpl<Document>(wrapped, new ObservableHelper.NoopObservableAdapter())
@@ -62,8 +63,7 @@ class ListDatabasesObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
-        subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        subscriber = new TestSubscriber(100)
         listDatabasesObservable.maxTime(999, MILLISECONDS).subscribe(subscriber)
 
         operation = executor.getReadOperation() as ListDatabasesOperation<Document>

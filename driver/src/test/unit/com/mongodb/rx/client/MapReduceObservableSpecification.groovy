@@ -18,6 +18,7 @@ package com.mongodb.rx.client
 
 import com.mongodb.MongoNamespace
 import com.mongodb.ReadConcern
+import com.mongodb.WriteConcern
 import com.mongodb.async.client.MapReduceIterable
 import com.mongodb.async.client.MapReduceIterableImpl
 import com.mongodb.async.client.MongoIterable
@@ -50,7 +51,7 @@ class MapReduceObservableSpecification extends Specification {
 
     def 'should have the same methods as the wrapped MapReduceIterable'() {
         given:
-        def wrapped = (MapReduceIterable.methods*.name - MongoIterable.methods*.name).sort()
+        def wrapped = (MapReduceIterable.methods*.name - MongoIterable.methods*.name).sort() - 'collation'
         def local = (MapReduceObservable.methods*.name - MongoObservable.methods*.name - 'batchSize').sort()
 
         expect:
@@ -59,11 +60,10 @@ class MapReduceObservableSpecification extends Specification {
 
     def 'should build the expected MapReduceWithInlineResultsOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new MapReduceIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                ReadConcern.DEFAULT, executor, 'map', 'reduce')
+                ReadConcern.DEFAULT, WriteConcern.ACKNOWLEDGED, executor, 'map', 'reduce')
         def mapReduceObservable = new MapReduceObservableImpl(wrapped, new ObservableHelper.NoopObservableAdapter())
 
         when: 'default input should be as expected'
@@ -78,8 +78,7 @@ class MapReduceObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
-        subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        subscriber = new TestSubscriber(100)
         mapReduceObservable.filter(new Document('filter', 1))
                 .finalizeFunction('finalize')
                 .limit(999)
@@ -106,14 +105,13 @@ class MapReduceObservableSpecification extends Specification {
 
     def 'should build the expected MapReduceToCollectionOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def executor = new TestOperationExecutor([null, null, null]);
 
         when: 'mapReduce to a collection'
         def collectionNamespace = new MongoNamespace('dbName', 'collName')
         def wrapped = new MapReduceIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                ReadConcern.DEFAULT, executor, 'map', 'reduce')
+                ReadConcern.DEFAULT, WriteConcern.ACKNOWLEDGED, executor, 'map', 'reduce')
         def mapReduceObservable = new MapReduceObservableImpl(wrapped, new ObservableHelper.NoopObservableAdapter())
         mapReduceObservable.collectionName(collectionNamespace.getCollectionName())
                 .databaseName(collectionNamespace.getDatabaseName())
@@ -132,7 +130,7 @@ class MapReduceObservableSpecification extends Specification {
 
         def operation = executor.getWriteOperation() as MapReduceToCollectionOperation
         def expectedOperation = new MapReduceToCollectionOperation(namespace, new BsonJavaScript('map'),
-                new BsonJavaScript('reduce'), 'collName')
+                new BsonJavaScript('reduce'), 'collName', WriteConcern.ACKNOWLEDGED)
                 .databaseName(collectionNamespace.getDatabaseName())
                 .filter(new BsonDocument('filter', new BsonInt32(1)))
                 .finalizeFunction(new BsonJavaScript('finalize'))

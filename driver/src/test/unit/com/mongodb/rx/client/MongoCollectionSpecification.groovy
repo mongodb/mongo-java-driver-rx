@@ -57,8 +57,8 @@ class MongoCollectionSpecification extends Specification {
     def 'should have the same methods as the wrapped MongoCollection'() {
         given:
         def exclusions = ['getObservableAdapter', 'withObservableAdapter']
-        def wrapped = WrappedMongoCollection.methods*.name.sort()
-        def local = MongoCollection.methods*.name.sort() - exclusions
+        def wrapped = WrappedMongoCollection.methods*.name.sort() - ['deleteMany', 'deleteOne']
+        def local = MongoCollection.methods*.name.sort() - exclusions - ['deleteMany', 'deleteOne']
 
         expect:
         wrapped == local

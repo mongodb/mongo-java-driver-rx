@@ -48,7 +48,7 @@ class DistinctObservableSpecification extends Specification {
 
     def 'should have the same methods as the wrapped DistinctIterable'() {
         given:
-        def wrapped = (DistinctIterable.methods*.name - MongoIterable.methods*.name).sort()
+        def wrapped = (DistinctIterable.methods*.name - MongoIterable.methods*.name).sort() - 'collation'
         def local = (DistinctObservable.methods*.name - MongoObservable.methods*.name - 'batchSize').sort()
 
         expect:
@@ -57,8 +57,7 @@ class DistinctObservableSpecification extends Specification {
 
     def 'should build the expected DistinctOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def executor = new TestOperationExecutor([null, null]);
         def wrapped = new DistinctIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
                 ReadConcern.DEFAULT, executor, 'field', new BsonDocument())
@@ -75,8 +74,7 @@ class DistinctObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
-        subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        subscriber = new TestSubscriber(100)
         distinctObservable.filter(new Document('field', 1)).maxTime(999, MILLISECONDS).subscribe(subscriber)
 
         operation = executor.getReadOperation() as DistinctOperation<Document>

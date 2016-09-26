@@ -50,7 +50,7 @@ class FindObservableSpecification extends Specification {
 
     def 'should have the same methods as the wrapped FindIterable'() {
         given:
-        def wrapped = (FindIterable.methods*.name - MongoIterable.methods*.name).sort()
+        def wrapped = (FindIterable.methods*.name - MongoIterable.methods*.name).sort()  - 'collation'
         def local = (FindObservable.methods*.name - MongoObservable.methods*.name - 'first' - 'batchSize').sort()
 
         expect:
@@ -59,8 +59,7 @@ class FindObservableSpecification extends Specification {
 
     def 'should build the expected findOperation'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def executor = new TestOperationExecutor([null, null]);
         def findOptions = new FindOptions().sort(new Document('sort', 1))
                 .modifiers(new Document('modifier', 1))
@@ -99,8 +98,7 @@ class FindObservableSpecification extends Specification {
         readPreference == secondary()
 
         when: 'overriding initial options'
-        subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        subscriber = new TestSubscriber(100)
         findObservable.filter(new Document('filter', 2))
                 .sort(new Document('sort', 2))
                 .modifiers(new Document('modifier', 2))
@@ -138,8 +136,7 @@ class FindObservableSpecification extends Specification {
 
     def 'should build the expected findOperation for first'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def cannedResults = [new Document('_id', 1)]
         def cursor = {
             Stub(AsyncBatchCursor) {
@@ -182,8 +179,7 @@ class FindObservableSpecification extends Specification {
 
     def 'should handle mixed types'() {
         given:
-        def subscriber = new TestSubscriber()
-        subscriber.requestMore(100)
+        def subscriber = new TestSubscriber(100)
         def executor = new TestOperationExecutor([null]);
         def findOptions = new FindOptions()
         def wrapped = new FindIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, secondary(),
