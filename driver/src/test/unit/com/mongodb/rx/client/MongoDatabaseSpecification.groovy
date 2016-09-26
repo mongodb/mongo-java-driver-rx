@@ -22,6 +22,7 @@ import com.mongodb.WriteConcern
 import com.mongodb.async.client.MongoCollection as WrappedMongoCollection
 import com.mongodb.async.client.MongoDatabase as WrappedMongoDatabase
 import com.mongodb.client.model.CreateCollectionOptions
+import com.mongodb.client.model.CreateViewOptions
 import org.bson.BsonDocument
 import org.bson.Document
 import org.bson.codecs.configuration.CodecRegistry
@@ -43,7 +44,7 @@ class MongoDatabaseSpecification extends Specification {
     def 'should have the same methods as the wrapped MongoDatabase'() {
         given:
         def exclusions = ['getObservableAdapter', 'withObservableAdapter']
-        def wrapped = WrappedMongoDatabase.methods*.name.sort() - 'createView'
+        def wrapped = WrappedMongoDatabase.methods*.name.sort()
         def local = MongoDatabase.methods*.name.sort() - exclusions
 
         expect:
@@ -317,6 +318,34 @@ class MongoDatabaseSpecification extends Specification {
 
         then:
         1 * wrapped.createCollection('collectionName', createCollectionOptions, _)
+    }
+
+    def 'should call the underlying createView'() {
+        given:
+        def createViewOptions = Stub(CreateViewOptions)
+        def wrapped = Mock(WrappedMongoDatabase)
+        def mongoDatabase = new MongoDatabaseImpl(wrapped, observableAdapter)
+        def viewName = 'view1'
+        def viewOn = 'col1'
+        def pipeline = [new Document('$match', new Document('x', true))];
+
+        when:
+        mongoDatabase.createView(viewName, viewOn, pipeline)
+
+        then: 'only executed when requested'
+        0 * wrapped.createView(_, _, _, _)
+
+        when:
+        mongoDatabase.createView(viewName, viewOn, pipeline).subscribe(subscriber())
+
+        then:
+        1 * wrapped.createView(viewName, viewOn, pipeline, _)
+
+        when:
+        mongoDatabase.createView(viewName, viewOn, pipeline, createViewOptions).subscribe(subscriber())
+
+        then:
+        1 * wrapped.createView(viewName, viewOn, pipeline, createViewOptions, _)
     }
 
 }

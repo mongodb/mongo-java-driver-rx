@@ -17,8 +17,8 @@ Changes between released versions
 [Full change list](https://jira.mongodb.org/issues/?jql=project%20%3D%20JAVARX%20AND%20fixVersion%20%3D%201.3)
 
   * Updated MongoDB Driver Async to 3.4.0-beta1
-    
   * Updated RxJava to 1.2.0 [JAVARX-33](https://jira.mongodb.org/browse/JAVARX-33)
+  * Added support for views [JAVARX-32](https://jira.mongodb.org/browse/JAVARX-32)
 
 ### 1.2 
 

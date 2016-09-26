@@ -23,10 +23,13 @@ import com.mongodb.WriteConcern;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.Observables;
 import com.mongodb.client.model.CreateCollectionOptions;
+import com.mongodb.client.model.CreateViewOptions;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
 import rx.Observable;
+
+import java.util.List;
 
 import static com.mongodb.assertions.Assertions.notNull;
 import static com.mongodb.rx.client.ObservableHelper.voidToSuccessCallback;
@@ -173,6 +176,27 @@ class MongoDatabaseImpl implements MongoDatabase {
             @Override
             public void apply(final SingleResultCallback<Success> callback) {
                 wrapped.createCollection(collectionName, options, voidToSuccessCallback(callback));
+            }
+        }), observableAdapter);
+    }
+
+    @Override
+    public Observable<Success> createView(final String viewName, final String viewOn, final List<? extends Bson> pipeline) {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
+            @Override
+            public void apply(final SingleResultCallback<Success> callback) {
+                wrapped.createView(viewName, viewOn, pipeline, voidToSuccessCallback(callback));
+            }
+        }), observableAdapter);
+    }
+
+    @Override
+    public Observable<Success> createView(final String viewName, final String viewOn, final List<? extends Bson> pipeline,
+                                          final CreateViewOptions createViewOptions) {
+        return RxObservables.create(Observables.observe(new Block<SingleResultCallback<Success>>() {
+            @Override
+            public void apply(final SingleResultCallback<Success> callback) {
+                wrapped.createView(viewName, viewOn, pipeline, createViewOptions, voidToSuccessCallback(callback));
             }
         }), observableAdapter);
     }
