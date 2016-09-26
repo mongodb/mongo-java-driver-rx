@@ -17,6 +17,7 @@
 package com.mongodb.rx.client;
 
 import com.mongodb.async.client.Observables;
+import com.mongodb.client.model.Collation;
 import org.bson.conversions.Bson;
 import rx.Observable;
 import rx.Subscriber;
@@ -46,6 +47,12 @@ class DistinctObservableImpl<TResult> implements DistinctObservable<TResult> {
     @Override
     public DistinctObservable<TResult> maxTime(final long maxTime, final TimeUnit timeUnit) {
         wrapped.maxTime(maxTime, timeUnit);
+        return this;
+    }
+
+    @Override
+    public DistinctObservable<TResult> collation(final Collation collation) {
+        wrapped.collation(collation);
         return this;
     }
 

@@ -19,6 +19,7 @@ package com.mongodb.rx.client;
 import com.mongodb.Block;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.Observables;
+import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.MapReduceAction;
 import org.bson.conversions.Bson;
 import rx.Observable;
@@ -132,6 +133,12 @@ class MapReduceObservableImpl<TResult> implements MapReduceObservable<TResult> {
                 wrapped.toCollection(voidToSuccessCallback(callback));
             }
         }), observableAdapter);
+    }
+
+    @Override
+    public MapReduceObservable<TResult> collation(final Collation collation) {
+        wrapped.collation(collation);
+        return this;
     }
 
     @Override

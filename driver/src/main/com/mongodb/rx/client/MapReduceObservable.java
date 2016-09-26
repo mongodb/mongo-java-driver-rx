@@ -17,6 +17,7 @@
 package com.mongodb.rx.client;
 
 
+import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.MapReduceAction;
 import org.bson.conversions.Bson;
 import rx.Observable;
@@ -172,4 +173,15 @@ public interface MapReduceObservable<TResult> extends MongoObservable<TResult> {
      * @mongodb.driver.manual aggregation/ Aggregation
      */
     Observable<Success> toCollection();
+
+    /**
+     * Sets the collation options
+     *
+     * <p>A null value represents the server default.</p>
+     * @param collation the collation options to use
+     * @return this
+     * @since 1.3
+     * @mongodb.server.release 3.4
+     */
+    MapReduceObservable<TResult> collation(Collation collation);
 }

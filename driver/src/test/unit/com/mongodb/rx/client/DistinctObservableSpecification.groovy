@@ -21,6 +21,7 @@ import com.mongodb.ReadConcern
 import com.mongodb.async.client.DistinctIterable
 import com.mongodb.async.client.DistinctIterableImpl
 import com.mongodb.async.client.MongoIterable
+import com.mongodb.client.model.Collation
 import com.mongodb.operation.DistinctOperation
 import org.bson.BsonDocument
 import org.bson.BsonInt32
@@ -41,14 +42,13 @@ import static spock.util.matcher.HamcrestSupport.expect
 class DistinctObservableSpecification extends Specification {
 
     def namespace = new MongoNamespace('db', 'coll')
-    def codecRegistry = fromProviders([new ValueCodecProvider(),
-                                       new DocumentCodecProvider(),
-                                       new BsonValueCodecProvider()])
+    def codecRegistry = fromProviders([new ValueCodecProvider(), new DocumentCodecProvider(), new BsonValueCodecProvider()])
     def readPreference = secondary()
+    def collation = Collation.builder().locale('en').build()
 
     def 'should have the same methods as the wrapped DistinctIterable'() {
         given:
-        def wrapped = (DistinctIterable.methods*.name - MongoIterable.methods*.name).sort() - 'collation'
+        def wrapped = (DistinctIterable.methods*.name - MongoIterable.methods*.name).sort()
         def local = (DistinctObservable.methods*.name - MongoObservable.methods*.name - 'batchSize').sort()
 
         expect:
@@ -75,14 +75,14 @@ class DistinctObservableSpecification extends Specification {
 
         when: 'overriding initial options'
         subscriber = new TestSubscriber(100)
-        distinctObservable.filter(new Document('field', 1)).maxTime(999, MILLISECONDS).subscribe(subscriber)
+        distinctObservable.filter(new Document('field', 1)).maxTime(999, MILLISECONDS).collation(collation).subscribe(subscriber)
 
         operation = executor.getReadOperation() as DistinctOperation<Document>
 
         then: 'should use the overrides'
         expect operation, isTheSameAs(new DistinctOperation<Document>(namespace, 'field', new DocumentCodec())
                 .filter(new BsonDocument('field', new BsonInt32(1)))
-                .maxTime(999, MILLISECONDS))
+                .maxTime(999, MILLISECONDS).collation(collation))
     }
 
 }

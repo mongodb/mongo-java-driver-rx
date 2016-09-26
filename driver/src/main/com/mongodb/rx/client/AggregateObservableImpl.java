@@ -19,6 +19,7 @@ package com.mongodb.rx.client;
 import com.mongodb.Block;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.Observables;
+import com.mongodb.client.model.Collation;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -71,6 +72,12 @@ class AggregateObservableImpl<TResult> implements AggregateObservable<TResult> {
                 wrapped.toCollection(voidToSuccessCallback(callback));
             }
         }), observableAdapter);
+    }
+
+    @Override
+    public AggregateObservable<TResult> collation(final Collation collation) {
+        wrapped.collation(collation);
+        return this;
     }
 
     @Override

@@ -19,8 +19,10 @@ package com.mongodb.rx.client
 import com.mongodb.MongoNamespace
 import com.mongodb.ReadConcern
 import com.mongodb.WriteConcern
+import com.mongodb.async.client.AggregateIterable
 import com.mongodb.async.client.AggregateIterableImpl
 import com.mongodb.async.client.MongoIterable
+import com.mongodb.client.model.Collation
 import com.mongodb.operation.AggregateOperation
 import com.mongodb.operation.AggregateToCollectionOperation
 import com.mongodb.operation.FindOperation
@@ -45,10 +47,11 @@ class AggregateObservableSpecification extends Specification {
 
     def namespace = new MongoNamespace('db', 'coll')
     def codecRegistry = fromProviders([new DocumentCodecProvider(), new BsonValueCodecProvider(), new ValueCodecProvider()])
+    def collation = Collation.builder().locale('en').build()
 
     def 'should have the same methods as the wrapped AggregateIterable'() {
         given:
-        def wrapped = (com.mongodb.async.client.AggregateIterable.methods*.name - MongoIterable.methods*.name).sort() - 'collation'
+        def wrapped = (AggregateIterable.methods*.name - MongoIterable.methods*.name).sort()
         def local = (AggregateObservable.methods*.name - MongoObservable.methods*.name - 'batchSize').sort()
 
         expect:
@@ -77,7 +80,7 @@ class AggregateObservableSpecification extends Specification {
 
         when: 'overriding initial options'
         subscriber = new TestSubscriber(100)
-        aggregateObservable.maxTime(999, MILLISECONDS).useCursor(true).subscribe(subscriber)
+        aggregateObservable.maxTime(999, MILLISECONDS).useCursor(true).collation(collation).subscribe(subscriber)
         operation = executor.getReadOperation() as AggregateOperation<Document>
 
         then: 'should use the overrides'
@@ -85,7 +88,8 @@ class AggregateObservableSpecification extends Specification {
                 new DocumentCodec())
                 .batchSize(100)
                 .maxTime(999, MILLISECONDS)
-                .useCursor(true))
+                .useCursor(true)
+                .collation(collation))
     }
 
     def 'should build the expected AggregateToCollectionOperation'() {
@@ -102,6 +106,7 @@ class AggregateObservableSpecification extends Specification {
                 .allowDiskUse(true)
                 .useCursor(true)
                 .bypassDocumentValidation(true)
+                .collation(collation)
 
         when: 'aggregation includes $out'
         aggregateObservable.subscribe(subscriber)
@@ -113,7 +118,8 @@ class AggregateObservableSpecification extends Specification {
                 WriteConcern.ACKNOWLEDGED)
                 .maxTime(999, MILLISECONDS)
                 .allowDiskUse(true)
-                .bypassDocumentValidation(true))
+                .bypassDocumentValidation(true)
+                .collation(collation))
 
         when: 'the subsequent read should have the batchSize set'
         operation = executor.getReadOperation() as FindOperation<Document>

@@ -16,6 +16,7 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.client.model.Collation;
 import rx.Observable;
 
 import java.util.concurrent.TimeUnit;
@@ -78,5 +79,16 @@ public interface AggregateObservable<TResult> extends MongoObservable<TResult> {
      * @mongodb.driver.manual aggregation/ Aggregation
      */
     Observable<Success> toCollection();
+
+    /**
+     * Sets the collation options
+     *
+     * <p>A null value represents the server default.</p>
+     * @param collation the collation options to use
+     * @return this
+     * @since 1.3
+     * @mongodb.server.release 3.4
+     */
+    AggregateObservable<TResult> collation(Collation collation);
 
 }

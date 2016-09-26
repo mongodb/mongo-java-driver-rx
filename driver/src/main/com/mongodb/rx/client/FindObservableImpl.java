@@ -20,6 +20,7 @@ import com.mongodb.Block;
 import com.mongodb.CursorType;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.Observables;
+import com.mongodb.client.model.Collation;
 import org.bson.conversions.Bson;
 import rx.Observable;
 import rx.Subscriber;
@@ -118,6 +119,12 @@ class FindObservableImpl<TResult> implements FindObservable<TResult> {
     @Override
     public FindObservable<TResult> cursorType(final CursorType cursorType) {
         wrapped.cursorType(cursorType);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> collation(final Collation collation) {
+        wrapped.collation(collation);
         return this;
     }
 

@@ -19,6 +19,7 @@ Changes between released versions
   * Updated MongoDB Driver Async to 3.4.0-beta1
   * Updated RxJava to 1.2.0 [JAVARX-33](https://jira.mongodb.org/browse/JAVARX-33)
   * Added support for views [JAVARX-32](https://jira.mongodb.org/browse/JAVARX-32)
+  * Added Collation support [JAVARX-31](https://jira.mongodb.org/browse/JAVARX-31)
 
 ### 1.2 
 

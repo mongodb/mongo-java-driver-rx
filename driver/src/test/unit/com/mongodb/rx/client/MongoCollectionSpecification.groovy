@@ -22,7 +22,9 @@ import com.mongodb.ReadPreference
 import com.mongodb.WriteConcern
 import com.mongodb.async.client.MongoCollection as WrappedMongoCollection
 import com.mongodb.client.model.BulkWriteOptions
+import com.mongodb.client.model.Collation
 import com.mongodb.client.model.CountOptions
+import com.mongodb.client.model.DeleteOptions
 import com.mongodb.client.model.FindOneAndDeleteOptions
 import com.mongodb.client.model.FindOneAndReplaceOptions
 import com.mongodb.client.model.FindOneAndUpdateOptions
@@ -48,6 +50,7 @@ class MongoCollectionSpecification extends Specification {
     def observableAdapter = new ObservableHelper.NoopObservableAdapter()
     def mongoCollection = new MongoCollectionImpl(wrapped, observableAdapter)
     def filter = new Document('_id', 1)
+    def collation = Collation.builder().locale('en').build()
     def subscriber = {
         def subscriber = new TestSubscriber()
         subscriber.requestMore(1)
@@ -57,8 +60,8 @@ class MongoCollectionSpecification extends Specification {
     def 'should have the same methods as the wrapped MongoCollection'() {
         given:
         def exclusions = ['getObservableAdapter', 'withObservableAdapter']
-        def wrapped = WrappedMongoCollection.methods*.name.sort() - ['deleteMany', 'deleteOne']
-        def local = MongoCollection.methods*.name.sort() - exclusions - ['deleteMany', 'deleteOne']
+        def wrapped = WrappedMongoCollection.methods*.name.sort()
+        def local = MongoCollection.methods*.name.sort() - exclusions
 
         expect:
         wrapped == local
@@ -402,6 +405,19 @@ class MongoCollectionSpecification extends Specification {
 
         then:
         1 * wrapped.deleteOne(filter, _)
+
+        when:
+        def deleteOptions = new DeleteOptions().collation(collation)
+        mongoCollection.deleteOne(filter, deleteOptions)
+
+        then: 'only executed when requested'
+        0 * wrapped.deleteOne(_, _, _)
+
+        when:
+        mongoCollection.deleteOne(filter, deleteOptions).subscribe(subscriber())
+
+        then:
+        1 * wrapped.deleteOne(filter, deleteOptions, _)
     }
 
     def 'should use the underlying deleteMany'() {
@@ -416,6 +432,19 @@ class MongoCollectionSpecification extends Specification {
 
         then:
         1 * wrapped.deleteMany(filter, _)
+
+        when:
+        def deleteOptions = new DeleteOptions().collation(collation)
+        mongoCollection.deleteMany(filter, deleteOptions)
+
+        then: 'only executed when requested'
+        0 * wrapped.deleteMany(_, _, _)
+
+        when:
+        mongoCollection.deleteMany(filter, deleteOptions).subscribe(subscriber())
+
+        then:
+        1 * wrapped.deleteMany(filter, deleteOptions, _)
     }
 
     def 'should use the underlying replaceOne'() {

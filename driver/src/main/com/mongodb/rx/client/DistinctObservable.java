@@ -16,6 +16,7 @@
 
 package com.mongodb.rx.client;
 
+import com.mongodb.client.model.Collation;
 import org.bson.conversions.Bson;
 
 import java.util.concurrent.TimeUnit;
@@ -45,5 +46,16 @@ public interface DistinctObservable<TResult> extends MongoObservable<TResult> {
      * @return this
      */
     DistinctObservable<TResult> maxTime(long maxTime, TimeUnit timeUnit);
+
+    /**
+     * Sets the collation options
+     *
+     * <p>A null value represents the server default.</p>
+     * @param collation the collation options to use
+     * @return this
+     * @since 1.3
+     * @mongodb.server.release 3.4
+     */
+    DistinctObservable<TResult> collation(Collation collation);
 
 }

@@ -24,6 +24,7 @@ import com.mongodb.annotations.ThreadSafe;
 import com.mongodb.bulk.BulkWriteResult;
 import com.mongodb.client.model.BulkWriteOptions;
 import com.mongodb.client.model.CountOptions;
+import com.mongodb.client.model.DeleteOptions;
 import com.mongodb.client.model.FindOneAndDeleteOptions;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.FindOneAndUpdateOptions;
@@ -355,12 +356,33 @@ public interface MongoCollection<TDocument> {
     Observable<DeleteResult> deleteOne(Bson filter);
 
     /**
+     * Removes at most one document from the collection that matches the given filter.  If no documents match, the collection is not
+     * modified.
+     *
+     * @param filter the query filter to apply the the delete operation
+     * @param options the options to apply to the delete operation
+     * @return an Observable with a single element the DeleteResult or with an com.mongodb.MongoException
+     * @since 1.3
+     */
+    Observable<DeleteResult> deleteOne(Bson filter, DeleteOptions options);
+
+    /**
      * Removes all documents from the collection that match the given query filter.  If no documents match, the collection is not modified.
      *
      * @param filter the query filter to apply the the delete operation
      * @return an Observable with a single element the DeleteResult or with an com.mongodb.MongoException
      */
     Observable<DeleteResult> deleteMany(Bson filter);
+
+    /**
+     * Removes all documents from the collection that match the given query filter.  If no documents match, the collection is not modified.
+     *
+     * @param filter the query filter to apply the the delete operation
+     * @param options the options to apply to the delete operation
+     * @return an Observable with a single element the DeleteResult or with an com.mongodb.MongoException
+     * @since 1.3
+     */
+    Observable<DeleteResult> deleteMany(Bson filter, DeleteOptions options);
 
     /**
      * Replace a document in the collection according to the specified arguments.
