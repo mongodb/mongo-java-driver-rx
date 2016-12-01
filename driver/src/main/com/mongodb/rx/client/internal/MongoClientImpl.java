@@ -14,20 +14,36 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.async.client.MongoClientSettings;
 import com.mongodb.async.client.Observables;
+import com.mongodb.rx.client.ListDatabasesObservable;
+import com.mongodb.rx.client.MongoClient;
+import com.mongodb.rx.client.MongoDatabase;
+import com.mongodb.rx.client.ObservableAdapter;
 import org.bson.Document;
 import rx.Observable;
 
 import static com.mongodb.assertions.Assertions.notNull;
 
-class MongoClientImpl implements MongoClient {
+/**
+ * The internal MongoClient implementation.
+ *
+ * <p>This should not be considered a part of the public API.</p>
+ */
+public class MongoClientImpl implements MongoClient {
     private final com.mongodb.async.client.MongoClient wrapped;
     private final ObservableAdapter observableAdapter;
 
-    MongoClientImpl(final com.mongodb.async.client.MongoClient wrapped, final ObservableAdapter observableAdapter) {
+    /**
+     * The internal MongoClientImpl constructor.
+     *
+     * <p>This should not be considered a part of the public API.</p>
+     * @param wrapped the underlying MongoClient
+     * @param observableAdapter  the ObservableAdapter
+     */
+    public MongoClientImpl(final com.mongodb.async.client.MongoClient wrapped, final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
         this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }

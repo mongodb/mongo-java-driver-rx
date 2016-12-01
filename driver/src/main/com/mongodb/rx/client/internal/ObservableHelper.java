@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.async.SingleResultCallback;
+import com.mongodb.rx.client.ObservableAdapter;
+import com.mongodb.rx.client.Success;
 import rx.Observable;
 
 /**
  * A helper class for observables
  */
-final class ObservableHelper {
-
-    private ObservableHelper() {
-    }
+public final class ObservableHelper {
 
     /**
      * Helper to trigger Boolean SingleResultCallbacks for Void operations
@@ -33,7 +32,7 @@ final class ObservableHelper {
      * @param callback the boolean single result callback.
      * @return the results callback for an operation that returns null to signal success.
      */
-    static SingleResultCallback<Void> voidToSuccessCallback(final SingleResultCallback<Success> callback) {
+    public static SingleResultCallback<Void> voidToSuccessCallback(final SingleResultCallback<Success> callback) {
         return new SingleResultCallback<Void>() {
             @Override
             public void onResult(final Void result, final Throwable t) {
@@ -45,11 +44,14 @@ final class ObservableHelper {
     /**
      * A simple noop ObservableAdapter
      */
-    static class NoopObservableAdapter implements ObservableAdapter {
+    public static class NoopObservableAdapter implements ObservableAdapter {
         @Override
         public <T> Observable<T> adapt(final Observable<T> observable) {
             return observable;
         }
+    }
+
+    private ObservableHelper() {
     }
 
 }

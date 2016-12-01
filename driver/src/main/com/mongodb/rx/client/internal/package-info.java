@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MongoDB, Inc.
+ * Copyright 2016 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client
-
-import com.mongodb.async.client.MongoClient as WrappedMongoClient
-import spock.lang.Specification
-
-class MongoClientSpecification extends Specification {
-
-    def 'should have the same methods as the wrapped MongoClient'() {
-        given:
-        def exclusions = ['getObservableAdapter', 'withObservableAdapter']
-        def wrapped = WrappedMongoClient.methods*.name.sort()
-        def local = MongoClient.methods*.name.sort() - exclusions
-
-        expect:
-        wrapped == local
-    }
-
-}
+/**
+ * Utility classes for internal library use only.
+ *
+ * <p>This should not be considered a part of the public API.</p>
+ */
+package com.mongodb.rx.client.internal;

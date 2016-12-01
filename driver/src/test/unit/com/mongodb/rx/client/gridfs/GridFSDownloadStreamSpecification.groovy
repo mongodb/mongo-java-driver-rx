@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 MongoDB, Inc.
+ * Copyright 2016 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client
+package com.mongodb.rx.client.gridfs
 
-import com.mongodb.async.client.ListIndexesIterable
-import com.mongodb.async.client.MongoIterable
 import spock.lang.Specification
+import com.mongodb.async.client.gridfs.GridFSDownloadStream as WrappedGridFSDownloadStream
 
-class ListIndexesObservableSpecification extends Specification {
+class GridFSDownloadStreamSpecification extends Specification {
 
-    def 'should have the same methods as the wrapped ListIndexesIterable'() {
+    def 'should have the same methods as the wrapped GridFSDownloadStream'() {
         given:
-        def wrapped = (ListIndexesIterable.methods*.name - MongoIterable.methods*.name).sort()
-        def local = (ListIndexesObservable.methods*.name - MongoObservable.methods*.name - 'batchSize').sort()
+        def wrapped = (WrappedGridFSDownloadStream.methods*.name).sort()
+        def local = (GridFSDownloadStream.methods*.name).sort()
 
         expect:
         wrapped == local

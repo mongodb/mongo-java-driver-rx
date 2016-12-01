@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.Block;
 import com.mongodb.CursorType;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.Observables;
 import com.mongodb.client.model.Collation;
+import com.mongodb.rx.client.FindObservable;
+import com.mongodb.rx.client.ObservableAdapter;
 import org.bson.conversions.Bson;
 import rx.Observable;
 import rx.Subscriber;

@@ -27,7 +27,8 @@ import java.security.CodeSource;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import static com.mongodb.rx.client.ObservableHelper.NoopObservableAdapter;
+import com.mongodb.rx.client.internal.MongoClientImpl;
+import static com.mongodb.rx.client.internal.ObservableHelper.NoopObservableAdapter;
 
 /**
  * A factory for MongoClient instances.

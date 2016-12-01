@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.Block;
 import com.mongodb.ReadConcern;
@@ -24,6 +24,11 @@ import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.Observables;
 import com.mongodb.client.model.CreateCollectionOptions;
 import com.mongodb.client.model.CreateViewOptions;
+import com.mongodb.rx.client.ListCollectionsObservable;
+import com.mongodb.rx.client.MongoCollection;
+import com.mongodb.rx.client.MongoDatabase;
+import com.mongodb.rx.client.ObservableAdapter;
+import com.mongodb.rx.client.Success;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
@@ -32,9 +37,14 @@ import rx.Observable;
 import java.util.List;
 
 import static com.mongodb.assertions.Assertions.notNull;
-import static com.mongodb.rx.client.ObservableHelper.voidToSuccessCallback;
+import static com.mongodb.rx.client.internal.ObservableHelper.voidToSuccessCallback;
 
-class MongoDatabaseImpl implements MongoDatabase {
+/**
+ * The internal MongoDatabase implementation.
+ *
+ * <p>This should not be considered a part of the public API.</p>
+ */
+public final class MongoDatabaseImpl implements MongoDatabase {
 
     private final com.mongodb.async.client.MongoDatabase wrapped;
     private final ObservableAdapter observableAdapter;
@@ -199,5 +209,15 @@ class MongoDatabaseImpl implements MongoDatabase {
                 wrapped.createView(viewName, viewOn, pipeline, createViewOptions, voidToSuccessCallback(callback));
             }
         }), observableAdapter);
+    }
+
+    /**
+     * Gets the wrapped MongoDatabase
+     *
+     * <p>This should not be considered a part of the public API.</p>
+     * @return wrapped MongoDatabase
+     */
+    public com.mongodb.async.client.MongoDatabase getWrapped() {
+        return wrapped;
     }
 }

@@ -16,35 +16,11 @@
 
 package com.mongodb.rx.client
 
-import com.mongodb.MongoNamespace
-import com.mongodb.ReadConcern
 import com.mongodb.async.client.DistinctIterable
-import com.mongodb.async.client.DistinctIterableImpl
 import com.mongodb.async.client.MongoIterable
-import com.mongodb.client.model.Collation
-import com.mongodb.operation.DistinctOperation
-import org.bson.BsonDocument
-import org.bson.BsonInt32
-import org.bson.Document
-import org.bson.codecs.BsonValueCodecProvider
-import org.bson.codecs.DocumentCodec
-import org.bson.codecs.DocumentCodecProvider
-import org.bson.codecs.ValueCodecProvider
-import rx.observers.TestSubscriber
 import spock.lang.Specification
 
-import static com.mongodb.ReadPreference.secondary
-import static com.mongodb.rx.client.CustomMatchers.isTheSameAs
-import static java.util.concurrent.TimeUnit.MILLISECONDS
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders
-import static spock.util.matcher.HamcrestSupport.expect
-
 class DistinctObservableSpecification extends Specification {
-
-    def namespace = new MongoNamespace('db', 'coll')
-    def codecRegistry = fromProviders([new ValueCodecProvider(), new DocumentCodecProvider(), new BsonValueCodecProvider()])
-    def readPreference = secondary()
-    def collation = Collation.builder().locale('en').build()
 
     def 'should have the same methods as the wrapped DistinctIterable'() {
         given:
@@ -53,36 +29,6 @@ class DistinctObservableSpecification extends Specification {
 
         expect:
         wrapped == local
-    }
-
-    def 'should build the expected DistinctOperation'() {
-        given:
-        def subscriber = new TestSubscriber(100)
-        def executor = new TestOperationExecutor([null, null]);
-        def wrapped = new DistinctIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                ReadConcern.DEFAULT, executor, 'field', new BsonDocument())
-        def distinctObservable = new DistinctObservableImpl(wrapped, new ObservableHelper.NoopObservableAdapter())
-
-        when: 'default input should be as expected'
-        distinctObservable.subscribe(subscriber)
-
-        def operation = executor.getReadOperation() as DistinctOperation<Document>
-        def readPreference = executor.getReadPreference()
-
-        then:
-        expect operation, isTheSameAs(new DistinctOperation<Document>(namespace, 'field', new DocumentCodec()).filter(new BsonDocument()));
-        readPreference == secondary()
-
-        when: 'overriding initial options'
-        subscriber = new TestSubscriber(100)
-        distinctObservable.filter(new Document('field', 1)).maxTime(999, MILLISECONDS).collation(collation).subscribe(subscriber)
-
-        operation = executor.getReadOperation() as DistinctOperation<Document>
-
-        then: 'should use the overrides'
-        expect operation, isTheSameAs(new DistinctOperation<Document>(namespace, 'field', new DocumentCodec())
-                .filter(new BsonDocument('field', new BsonInt32(1)))
-                .maxTime(999, MILLISECONDS).collation(collation))
     }
 
 }

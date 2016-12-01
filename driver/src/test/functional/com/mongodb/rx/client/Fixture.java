@@ -19,6 +19,7 @@ package com.mongodb.rx.client;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoCommandException;
 import com.mongodb.MongoNamespace;
+import com.mongodb.rx.client.internal.MongoClientImpl;
 import org.bson.Document;
 
 import static java.util.concurrent.TimeUnit.SECONDS;

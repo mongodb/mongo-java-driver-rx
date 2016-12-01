@@ -20,6 +20,7 @@ import com.mongodb.MongoNamespace
 import com.mongodb.client.MongoDriverInformation
 import com.mongodb.client.model.IndexModel
 import com.mongodb.diagnostics.logging.Loggers
+import com.mongodb.rx.client.internal.ObservableHelper
 import org.bson.Document
 import rx.Observable
 import rx.Subscriber
@@ -28,8 +29,8 @@ import rx.schedulers.Schedulers
 
 import java.util.concurrent.atomic.AtomicInteger
 
-import static Fixture.getMongoClient
 import static com.mongodb.rx.client.Fixture.getConnectionString
+import static com.mongodb.rx.client.Fixture.getMongoClient
 import static java.util.concurrent.TimeUnit.SECONDS
 
 class SmokeTestSpecification extends FunctionalSpecification {

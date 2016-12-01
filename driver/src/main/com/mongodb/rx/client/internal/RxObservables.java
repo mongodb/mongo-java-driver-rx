@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.async.client.Observable;
 import com.mongodb.async.client.Observer;
 import com.mongodb.async.client.Subscription;
+import com.mongodb.rx.client.ObservableAdapter;
 import rx.Producer;
 import rx.Subscriber;
 

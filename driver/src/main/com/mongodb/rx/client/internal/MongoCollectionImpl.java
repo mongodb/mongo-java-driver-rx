@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.Block;
 import com.mongodb.MongoNamespace;
@@ -39,6 +39,14 @@ import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.client.model.WriteModel;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
+import com.mongodb.rx.client.AggregateObservable;
+import com.mongodb.rx.client.DistinctObservable;
+import com.mongodb.rx.client.FindObservable;
+import com.mongodb.rx.client.ListIndexesObservable;
+import com.mongodb.rx.client.MapReduceObservable;
+import com.mongodb.rx.client.MongoCollection;
+import com.mongodb.rx.client.ObservableAdapter;
+import com.mongodb.rx.client.Success;
 import org.bson.BsonDocument;
 import org.bson.Document;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -48,7 +56,7 @@ import rx.Observable;
 import java.util.List;
 
 import static com.mongodb.assertions.Assertions.notNull;
-import static com.mongodb.rx.client.ObservableHelper.voidToSuccessCallback;
+import static com.mongodb.rx.client.internal.ObservableHelper.voidToSuccessCallback;
 
 class MongoCollectionImpl<TDocument> implements MongoCollection<TDocument> {
 

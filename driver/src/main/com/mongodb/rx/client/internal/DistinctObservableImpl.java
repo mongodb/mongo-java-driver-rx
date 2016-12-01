@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.async.client.Observables;
+import com.mongodb.client.model.Collation;
+import com.mongodb.rx.client.DistinctObservable;
+import com.mongodb.rx.client.ObservableAdapter;
 import org.bson.conversions.Bson;
 import rx.Observable;
 import rx.Subscriber;
@@ -26,28 +29,32 @@ import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.assertions.Assertions.notNull;
 
-final class ListCollectionsObservableImpl<TResult> implements ListCollectionsObservable<TResult> {
 
-    private final com.mongodb.async.client.ListCollectionsIterable<TResult> wrapped;
+class DistinctObservableImpl<TResult> implements DistinctObservable<TResult> {
+
+    private final com.mongodb.async.client.DistinctIterable<TResult> wrapped;
     private final ObservableAdapter observableAdapter;
 
-    ListCollectionsObservableImpl(final com.mongodb.async.client.ListCollectionsIterable<TResult> wrapped,
-                                  final ObservableAdapter observableAdapter) {
+    DistinctObservableImpl(final com.mongodb.async.client.DistinctIterable<TResult> wrapped, final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
         this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
     @Override
-    public ListCollectionsObservable<TResult> filter(final Bson filter) {
-        notNull("filter", filter);
+    public DistinctObservable<TResult> filter(final Bson filter) {
         wrapped.filter(filter);
         return this;
     }
 
     @Override
-    public ListCollectionsObservable<TResult> maxTime(final long maxTime, final TimeUnit timeUnit) {
-        notNull("timeUnit", timeUnit);
+    public DistinctObservable<TResult> maxTime(final long maxTime, final TimeUnit timeUnit) {
         wrapped.maxTime(maxTime, timeUnit);
+        return this;
+    }
+
+    @Override
+    public DistinctObservable<TResult> collation(final Collation collation) {
+        wrapped.collation(collation);
         return this;
     }
 

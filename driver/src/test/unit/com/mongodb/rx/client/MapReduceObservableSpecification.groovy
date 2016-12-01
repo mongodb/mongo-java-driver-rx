@@ -16,40 +16,11 @@
 
 package com.mongodb.rx.client
 
-import com.mongodb.MongoNamespace
-import com.mongodb.ReadConcern
-import com.mongodb.WriteConcern
 import com.mongodb.async.client.MapReduceIterable
-import com.mongodb.async.client.MapReduceIterableImpl
 import com.mongodb.async.client.MongoIterable
-import com.mongodb.client.model.Collation
-import com.mongodb.client.model.MapReduceAction
-import com.mongodb.operation.FindOperation
-import com.mongodb.operation.MapReduceToCollectionOperation
-import com.mongodb.operation.MapReduceWithInlineResultsOperation
-import org.bson.BsonDocument
-import org.bson.BsonInt32
-import org.bson.BsonJavaScript
-import org.bson.Document
-import org.bson.codecs.BsonValueCodecProvider
-import org.bson.codecs.DocumentCodec
-import org.bson.codecs.DocumentCodecProvider
-import org.bson.codecs.ValueCodecProvider
-import rx.observers.TestSubscriber
 import spock.lang.Specification
 
-import static com.mongodb.ReadPreference.secondary
-import static com.mongodb.rx.client.CustomMatchers.isTheSameAs
-import static java.util.concurrent.TimeUnit.MILLISECONDS
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders
-import static spock.util.matcher.HamcrestSupport.expect
-
 class MapReduceObservableSpecification extends Specification {
-
-    def namespace = new MongoNamespace('db', 'coll')
-    def codecRegistry = fromProviders([new ValueCodecProvider(), new DocumentCodecProvider(), new BsonValueCodecProvider()])
-    def readPreference = secondary()
-    def collation = Collation.builder().locale('en').build()
 
     def 'should have the same methods as the wrapped MapReduceIterable'() {
         given:
@@ -58,114 +29,6 @@ class MapReduceObservableSpecification extends Specification {
 
         expect:
         wrapped == local
-    }
-
-    def 'should build the expected MapReduceWithInlineResultsOperation'() {
-        given:
-        def subscriber = new TestSubscriber(100)
-        def executor = new TestOperationExecutor([null, null]);
-        def wrapped = new MapReduceIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                ReadConcern.DEFAULT, WriteConcern.ACKNOWLEDGED, executor, 'map', 'reduce')
-        def mapReduceObservable = new MapReduceObservableImpl(wrapped, new ObservableHelper.NoopObservableAdapter())
-
-        when: 'default input should be as expected'
-        mapReduceObservable.subscribe(subscriber)
-
-        def operation = executor.getReadOperation() as MapReduceWithInlineResultsOperation<Document>
-        def readPreference = executor.getReadPreference()
-
-        then:
-        expect operation, isTheSameAs(new MapReduceWithInlineResultsOperation<Document>(namespace, new BsonJavaScript('map'),
-                new BsonJavaScript('reduce'), new DocumentCodec()).verbose(true));
-        readPreference == secondary()
-
-        when: 'overriding initial options'
-        subscriber = new TestSubscriber(100)
-        mapReduceObservable.filter(new Document('filter', 1))
-                .finalizeFunction('finalize')
-                .limit(999)
-                .maxTime(999, MILLISECONDS)
-                .scope(new Document('scope', 1))
-                .sort(new Document('sort', 1))
-                .verbose(false)
-                .collation(collation)
-                .subscribe(subscriber)
-
-        operation = executor.getReadOperation() as MapReduceWithInlineResultsOperation<Document>
-
-        then: 'should use the overrides'
-        expect operation, isTheSameAs(new MapReduceWithInlineResultsOperation<Document>(namespace, new BsonJavaScript('map'),
-                new BsonJavaScript('reduce'), new DocumentCodec())
-                .filter(new BsonDocument('filter', new BsonInt32(1)))
-                .finalizeFunction(new BsonJavaScript('finalize'))
-                .limit(999)
-                .maxTime(999, MILLISECONDS)
-                .scope(new BsonDocument('scope', new BsonInt32(1)))
-                .sort(new BsonDocument('sort', new BsonInt32(1)))
-                .verbose(false)
-                .collation(collation)
-        )
-    }
-
-    def 'should build the expected MapReduceToCollectionOperation'() {
-        given:
-        def subscriber = new TestSubscriber(100)
-        def executor = new TestOperationExecutor([null, null, null]);
-
-        when: 'mapReduce to a collection'
-        def collectionNamespace = new MongoNamespace('dbName', 'collName')
-        def wrapped = new MapReduceIterableImpl<Document, Document>(namespace, Document, Document, codecRegistry, readPreference,
-                ReadConcern.DEFAULT, WriteConcern.ACKNOWLEDGED, executor, 'map', 'reduce')
-        def mapReduceObservable = new MapReduceObservableImpl(wrapped, new ObservableHelper.NoopObservableAdapter())
-        mapReduceObservable.collectionName(collectionNamespace.getCollectionName())
-                .databaseName(collectionNamespace.getDatabaseName())
-                .filter(new Document('filter', 1))
-                .finalizeFunction('finalize')
-                .limit(999)
-                .maxTime(999, MILLISECONDS)
-                .scope(new Document('scope', 1))
-                .sort(new Document('sort', 1))
-                .verbose(false)
-                .nonAtomic(true)
-                .action(MapReduceAction.MERGE)
-                .sharded(true)
-                .jsMode(true)
-                .collation(collation)
-                .subscribe(subscriber)
-
-        def operation = executor.getWriteOperation() as MapReduceToCollectionOperation
-        def expectedOperation = new MapReduceToCollectionOperation(namespace, new BsonJavaScript('map'),
-                new BsonJavaScript('reduce'), 'collName', WriteConcern.ACKNOWLEDGED)
-                .databaseName(collectionNamespace.getDatabaseName())
-                .filter(new BsonDocument('filter', new BsonInt32(1)))
-                .finalizeFunction(new BsonJavaScript('finalize'))
-                .limit(999)
-                .maxTime(999, MILLISECONDS)
-                .scope(new BsonDocument('scope', new BsonInt32(1)))
-                .sort(new BsonDocument('sort', new BsonInt32(1)))
-                .verbose(false)
-                .nonAtomic(true)
-                .action(MapReduceAction.MERGE.getValue())
-                .jsMode(true)
-                .sharded(true)
-                .collation(collation)
-
-        then: 'should use the overrides'
-        expect operation, isTheSameAs(expectedOperation)
-
-        when: 'the subsequent read should have the batchSize set'
-        operation = executor.getReadOperation() as FindOperation<Document>
-
-        then: 'should use the correct settings'
-        operation.getNamespace() == collectionNamespace
-        operation.getBatchSize() == 100 // set by subscriber.request
-
-        when: 'toCollection should work as expected'
-        mapReduceObservable.toCollection().subscribe(new TestSubscriber<Success>())
-        operation = executor.getWriteOperation() as MapReduceToCollectionOperation
-
-        then:
-        expect operation, isTheSameAs(expectedOperation)
     }
 
 }

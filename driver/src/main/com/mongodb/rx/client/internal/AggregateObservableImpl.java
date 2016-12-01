@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.Block;
 import com.mongodb.async.SingleResultCallback;
 import com.mongodb.async.client.Observables;
 import com.mongodb.client.model.Collation;
+import com.mongodb.rx.client.AggregateObservable;
+import com.mongodb.rx.client.ObservableAdapter;
+import com.mongodb.rx.client.Success;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -27,7 +30,7 @@ import rx.Subscription;
 import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.assertions.Assertions.notNull;
-import static com.mongodb.rx.client.ObservableHelper.voidToSuccessCallback;
+import static com.mongodb.rx.client.internal.ObservableHelper.voidToSuccessCallback;
 
 class AggregateObservableImpl<TResult> implements AggregateObservable<TResult> {
 

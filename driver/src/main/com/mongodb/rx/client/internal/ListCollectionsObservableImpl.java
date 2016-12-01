@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.mongodb.rx.client;
+package com.mongodb.rx.client.internal;
 
 import com.mongodb.async.client.Observables;
+import com.mongodb.rx.client.ListCollectionsObservable;
+import com.mongodb.rx.client.ObservableAdapter;
+import org.bson.conversions.Bson;
 import rx.Observable;
 import rx.Subscriber;
 import rx.Subscription;
@@ -25,19 +28,26 @@ import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.assertions.Assertions.notNull;
 
-class ListDatabasesObservableImpl<TResult> implements ListDatabasesObservable<TResult> {
+final class ListCollectionsObservableImpl<TResult> implements ListCollectionsObservable<TResult> {
 
-    private final com.mongodb.async.client.ListDatabasesIterable<TResult> wrapped;
+    private final com.mongodb.async.client.ListCollectionsIterable<TResult> wrapped;
     private final ObservableAdapter observableAdapter;
 
-    ListDatabasesObservableImpl(final com.mongodb.async.client.ListDatabasesIterable<TResult> wrapped,
-                                final ObservableAdapter observableAdapter) {
+    ListCollectionsObservableImpl(final com.mongodb.async.client.ListCollectionsIterable<TResult> wrapped,
+                                  final ObservableAdapter observableAdapter) {
         this.wrapped = notNull("wrapped", wrapped);
         this.observableAdapter = notNull("observableAdapter", observableAdapter);
     }
 
     @Override
-    public ListDatabasesObservable<TResult> maxTime(final long maxTime, final TimeUnit timeUnit) {
+    public ListCollectionsObservable<TResult> filter(final Bson filter) {
+        notNull("filter", filter);
+        wrapped.filter(filter);
+        return this;
+    }
+
+    @Override
+    public ListCollectionsObservable<TResult> maxTime(final long maxTime, final TimeUnit timeUnit) {
         notNull("timeUnit", timeUnit);
         wrapped.maxTime(maxTime, timeUnit);
         return this;
