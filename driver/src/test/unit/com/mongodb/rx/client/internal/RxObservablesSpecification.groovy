@@ -16,7 +16,9 @@
 
 package com.mongodb.rx.client.internal
 
+import com.mongodb.Block
 import com.mongodb.MongoException
+import com.mongodb.async.SingleResultCallback
 import com.mongodb.async.client.Observable
 import com.mongodb.async.client.Observer
 import com.mongodb.async.client.Subscription
@@ -25,6 +27,8 @@ import rx.Subscriber
 import rx.observers.TestSubscriber
 import rx.schedulers.TestScheduler
 import spock.lang.Specification
+
+import static com.mongodb.async.client.Observables.observe
 
 class RxObservablesSpecification extends Specification {
 
@@ -339,5 +343,31 @@ class RxObservablesSpecification extends Specification {
 
         then:
         subscriber.assertReceivedOnNext(['onNext called', 'onNext called', 'onNext called'])
+    }
+
+    def 'should not pass a request of 0 back to underlying Subscription'() {
+        given:
+        def subscriber = new TestSubscriber(0)
+        def requested = false;
+
+        when:
+        def observable = RxObservables.create(observe(new Block<SingleResultCallback<Integer>>(){
+            @Override
+            void apply(final SingleResultCallback<Integer> callback) {
+                requested = true
+                callback.onResult(1, null)
+            }
+        }), observableAdapter).subscribe(subscriber)
+
+        then:
+        subscriber.assertNoErrors()
+
+        when:
+        subscriber.requestMore(1)
+
+        then:
+        subscriber.assertNoErrors()
+        subscriber.assertTerminalEvent()
+        requested
     }
 }

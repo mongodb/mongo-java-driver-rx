@@ -88,6 +88,9 @@ final class RxObservables {
 
         @Override
         public void request(final long n) {
+            if (n == 0) {
+                return;
+            }
             if (isSubscribed()) {
                 try {
                     subscription.request(n);
