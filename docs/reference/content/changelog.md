@@ -11,6 +11,12 @@ title = "Changelog"
 Changes between released versions
 
 
+### 1.3.1
+
+[Full change list](https://jira.mongodb.org/issues/?jql=project%20%3D%20JAVARX%20AND%20fixVersion%20%3D%201.3.1)
+
+  * Fix bug disallowing requesting zero elements [JAVARX-34](https://jira.mongodb.org/browse/JAVARX-33)
+
 ### 1.3
 
 [Full change list](https://jira.mongodb.org/issues/?jql=project%20%3D%20JAVARX%20AND%20fixVersion%20%3D%201.3)
