@@ -52,8 +52,8 @@ At this point, the `database` object will be a connection to a MongoDB
 server for the specified database.
 
 {{% note %}}
-The API only returns `Observable<T>` or `MongoObservable<T>` when network IO required for the operation. For 
-`getDatabase("mydb")` there is no network IO required.
+The API only returns `Observable<T>` or `MongoObservable<T>` when network I/O is required for the operation. For 
+`getDatabase("mydb")` there is no network I/O required.
 A `MongoDatabase` instance provides methods to interact with a database
 but the database might not actually exist and will only be created on the
 insertion of data via some means; e.g. the creation of a collection or the insertion of documents.
@@ -105,9 +105,8 @@ contains a field `info` which is an embedded document:
 }
 ```
 
-To create the document using the Java driver, use the
-[Document]({{< apiref "org/bson/Document.html">}}) class. You
-can use this class to create the embedded document as well.
+To create the document, use the [Document]({{< apiref "org/bson/Document.html">}}) class. You can use this class to create the embedded 
+document as well. 
 
 ```java
 Document doc = new Document("name", "MongoDB")
@@ -212,8 +211,8 @@ method to query the collection.
 call the first() method on the result of the find() of method
 
 To get the first document in the collection, call the
-[first()]({{< apiref "com/mongodb/rx/client/MongoIterable.html#first--">}})
-method on the [find()]({{< apiref "com/mongodb/rx/client/MongoCollection.html#find--">}})
+[first()]({{< apiref "com/mongodb/reactivestreams/client/MongoIterable.html#first--">}})
+method on the [find()]({{< apiref "com/mongodb/reactivestreams/client/MongoCollection.html#find--">}})
 operation. `collection.find().first()` returns the first document or if no document is found the `Observable` just completes.
 This is useful for queries that should only match a single document, or if you are interested in the first document only.
 

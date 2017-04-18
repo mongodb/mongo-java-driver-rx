@@ -10,8 +10,8 @@ title = "Quick Tour Primer"
 
 # Quick Tour Primer
 
-The aim of this guide is to provide background about the Scala driver and its asynchronous API before going onto 
-looking at how to use the driver and MongoDB.
+The following code snippets come from the `SubscriberHelpers.java` example code
+that can be found with the [examples source]({{< srcref "examples/tour/src/main/tour/SubscriberHelpers.java">}}).
 
 {{% note %}}
 See the [installation guide]({{< relref "getting-started/installation-guide.md" >}})
@@ -23,19 +23,19 @@ for instructions on how to install the MongoDB RxJava Driver.
 This library provides support for [ReactiveX (Reactive Extensions)](http://reactivex.io/) by using the 
 [RxJava](https://github.com/ReactiveX/RxJava) library.  All database calls return an `Observable` which an `Observer` can subscribe to. 
 That `Observer` reacts to whatever item or sequence of items the `Observable` emits.  This pattern facilitates concurrent operations 
-because it does not need to block while waiting for the `Observable` to emit objects, but instead it creates a sentry in the form of 
-an `Observer` that stands ready to react appropriately at whatever future time the `Observable` does so.
+because an application thread is not blocked while waiting for the `Observable` to emit objects, but instead it creates a sentry
+in the form of an `Observer` that stands ready to react appropriately at whatever future time the `Observable` does so.
 
 For more information about Reactive Extensions and Observables go to: [http://reactivex.io](http://reactivex.io/).
 
 ## From Async Callbacks to Observables
 
-The MongoDB RxJava Driver is built upon the MongoDB Async driver which is callback driven.
-The API mirrors the Async driver API and any methods that cause network IO return either a `Observable<T>` or a `MongoObservable<T>` 
+The MongoDB RxJava Driver is built upon the callback-driven MongoDB Async driver.
+The API mirrors the Async driver API and any methods that cause network I/O return either a `Observable<T>` or a `MongoObservable<T>` 
 where `T` is the type of response for the operation.  
 The exception to that rule is for methods in the async driver that return a `Void` value in the callback. 
 As an `Observable<Void>` is generally considered bad practise, in these circumstances we
-return a [`Observable<Success>`]({{< apiref "com/mongodb/rx/client/Success.html">}}) for the operation.
+return an [`Observable<Success>`]({{< apiref "com/mongodb/reactivestreams/client/Success.html">}}) for the operation.
 
 ### MongoObservable
 
@@ -48,7 +48,7 @@ In RxJava `Observable` is not an interface, so where the MongoDB Async Driver AP
 
 2. `subscribe(Subscriber<? super TResult> subscriber)`
 
-    Subscribes to the `Observable`.
+    Creates an `Observable<T>`, subscribes to it, and returns the `Subscription`  
 
 {{% note %}}
 All [`Observables`](http://reactivex.io/RxJava/javadoc/rx/Observable.html) returned 
@@ -68,13 +68,13 @@ this is an artificial scenario for reactive extensions we generally block on the
 ensure the state of the database.  [`SubscriberHelpers.java`]({{< srcref "examples/tour/src/main/tour/SubscriberHelpers.java">}}) provides
 two static helpers:
 
-1.  printSubscriber
+1.  `printSubscriber()`
 
     Prints each value emitted by the `Observable`, along with an optional initial message.
 
-2.  printDocumentSubscriber
+2.  `printDocumentSubscriber()`
 
-    Prints the json version of each `Document` emitted but the `Observable`.
+    Prints the JSON representation of each `Document` emitted by the `Observable`.
 
 
 ##  Blocking and non blocking examples
@@ -92,5 +92,7 @@ observable.subscribe(printDocumentSubscriber());
 
 Subscriber<Document> subscriber = printDocumentSubscriber();
 observable.subscribe(subscriber);
-subscriber.awaitTerminalEvent(); // Block for the publisher to complete
+
+// Block for the publisher to complete
+subscriber.awaitTerminalEvent(); 
 ```
