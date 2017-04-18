@@ -20,8 +20,8 @@ description = "An RxJava implementation of the MongoDB Java driver"
 archivesBaseName = 'mongodb-driver-rx'
 
 dependencies {
-    compile 'org.mongodb:mongodb-driver-async:3.4.0'
-    compile 'io.reactivex:rxjava:1.2.0'
+    compile 'org.mongodb:mongodb-driver-async:3.4.2'
+    compile 'io.reactivex:rxjava:1.2.9'
 }
 
 task uberJar(type: Jar) {
