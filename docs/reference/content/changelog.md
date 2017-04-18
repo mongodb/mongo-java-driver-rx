@@ -10,12 +10,18 @@ title = "Changelog"
 
 Changes between released versions
 
+### 1.4.0
+
+[Full change list](https://jira.mongodb.org/issues/?jql=project%20%3D%20JAVARX%20AND%20fixVersion%20%3D%201.4)
+
+  * Add support for GridFS [JAVARX-27](https://jira.mongodb.org/browse/JAVARX-27)
+
 
 ### 1.3.1
 
 [Full change list](https://jira.mongodb.org/issues/?jql=project%20%3D%20JAVARX%20AND%20fixVersion%20%3D%201.3.1)
 
-  * Fix bug disallowing requesting zero elements [JAVARX-34](https://jira.mongodb.org/browse/JAVARX-33)
+  * Fix bug disallowing requesting zero elements [JAVARX-34](https://jira.mongodb.org/browse/JAVARX-34)
 
 ### 1.3
 
