@@ -28,6 +28,8 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import com.mongodb.rx.client.internal.MongoClientImpl;
+import org.bson.codecs.configuration.CodecRegistry;
+
 import static com.mongodb.rx.client.internal.ObservableHelper.NoopObservableAdapter;
 
 /**
@@ -143,6 +145,17 @@ public final class MongoClients {
                                      final MongoDriverInformation mongoDriverInformation) {
         return new MongoClientImpl(com.mongodb.async.client.MongoClients.create(settings,
                 getMongoDriverInformation(mongoDriverInformation)), observableAdapter);
+    }
+
+    /**
+     * Gets the default codec registry.
+     *
+     * @return the default codec registry
+     * @see MongoClientSettings#getCodecRegistry()
+     * @since 1.4
+     */
+    public static CodecRegistry getDefaultCodecRegistry() {
+        return com.mongodb.async.client.MongoClients.getDefaultCodecRegistry();
     }
 
     private static MongoDriverInformation getMongoDriverInformation(final MongoDriverInformation mongoDriverInformation) {
