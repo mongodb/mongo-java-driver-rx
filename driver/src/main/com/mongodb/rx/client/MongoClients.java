@@ -126,8 +126,8 @@ public final class MongoClients {
      */
     public static MongoClient create(final ConnectionString connectionString, final ObservableAdapter observableAdapter,
                                      final MongoDriverInformation mongoDriverInformation) {
-        return new MongoClientImpl(com.mongodb.async.client.MongoClients.create(connectionString,
-                getMongoDriverInformation(mongoDriverInformation)), observableAdapter);
+        return create(com.mongodb.async.client.MongoClients.create(connectionString, getMongoDriverInformation(mongoDriverInformation)),
+                observableAdapter);
     }
 
     /**
@@ -143,8 +143,36 @@ public final class MongoClients {
      */
     public static MongoClient create(final MongoClientSettings settings, final ObservableAdapter observableAdapter,
                                      final MongoDriverInformation mongoDriverInformation) {
-        return new MongoClientImpl(com.mongodb.async.client.MongoClients.create(settings,
-                getMongoDriverInformation(mongoDriverInformation)), observableAdapter);
+        return create(com.mongodb.async.client.MongoClients.create(settings, getMongoDriverInformation(mongoDriverInformation)),
+                observableAdapter);
+    }
+
+    /**
+     * Creates a new client with the given async MongoClient.
+     *
+     * <p>Note: This shares the {@code MongoClient} between two APIs. Calling close from either API will close the client.</p>
+     *
+     * @param asyncMongoClient the async MongoClient
+     * @return the client
+     * @since 1.4
+     */
+    public static MongoClient create(final com.mongodb.async.client.MongoClient asyncMongoClient) {
+        return create(asyncMongoClient, new NoopObservableAdapter());
+    }
+
+    /**
+     * Creates a new client with the given async MongoClient.
+     *
+     * <p>Note: This shares the {@code MongoClient} between two APIs. Calling close from either API will close the client.</p>
+     *
+     * @param asyncMongoClient the async MongoClient
+     * @param observableAdapter the {@link ObservableAdapter} to adapt all {@code Observables}.
+     * @return the client
+     * @since 1.4
+     */
+    public static MongoClient create(final com.mongodb.async.client.MongoClient asyncMongoClient,
+                                     final ObservableAdapter observableAdapter) {
+        return new MongoClientImpl(asyncMongoClient, observableAdapter);
     }
 
     /**
