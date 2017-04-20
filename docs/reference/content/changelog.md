@@ -14,7 +14,10 @@ Changes between released versions
 
 [Full change list](https://jira.mongodb.org/issues/?jql=project%20%3D%20JAVARX%20AND%20fixVersion%20%3D%201.4)
 
+  * Updated MongoDB Driver Async to 3.4.2
+  * Update RxJava to 1.2.9
   * Add support for GridFS [JAVARX-27](https://jira.mongodb.org/browse/JAVARX-27)
+  * Added `MongoClients.getDefaultCodecRegistry()` [JAVARX-23](https://jira.mongodb.org/browse/JAVARX-23)
 
 
 ### 1.3.1
