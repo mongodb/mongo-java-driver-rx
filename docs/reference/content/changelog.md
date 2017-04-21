@@ -18,7 +18,7 @@ Changes between released versions
   * Update RxJava to 1.2.9
   * Add support for GridFS [JAVARX-27](https://jira.mongodb.org/browse/JAVARX-27)
   * Added `MongoClients.getDefaultCodecRegistry()` [JAVARX-23](https://jira.mongodb.org/browse/JAVARX-23)
-
+  * Added a static factory method to MongoClients to takin an already constructed async.client.MongoClient [JAVARX-10](https://jira.mongodb.org/browse/JAVARX-10)
 
 ### 1.3.1
 
