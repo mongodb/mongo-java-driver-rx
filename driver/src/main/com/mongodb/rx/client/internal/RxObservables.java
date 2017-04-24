@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 final class RxObservables {
 
+    @SuppressWarnings("deprecation")
     static <TResult> rx.Observable<TResult> create(final Observable<TResult> observable, final ObservableAdapter observableAdapter) {
         return observableAdapter.adapt(rx.Observable.create(new rx.Observable.OnSubscribe<TResult>() {
             @Override
