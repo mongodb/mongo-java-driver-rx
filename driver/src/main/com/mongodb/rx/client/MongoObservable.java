@@ -40,7 +40,7 @@ public interface MongoObservable<TResult> {
     Observable<TResult> toObservable();
 
     /**
-     * A convience method that subscribes to the Observable as provided by {@link #toObservable}.
+     * A convinience method that subscribes to the Observable as provided by {@link #toObservable}.
      *
      * <p>
      * For more information on Subscriptions see the
