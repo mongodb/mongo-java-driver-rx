@@ -13,10 +13,16 @@ Changes between released versions
 
 ### 1.5.0
 
+[Full change list](https://jira.mongodb.org/issues/?jql=project%20%3D%20JAVARX%20AND%20fixVersion%20%3D%201.5)
+
+
   * Updated RxJava to 1.3.0 [JAVARX-40](https://jira.mongodb.org/browse/JAVARX-40)
   * Updated MongoDB Driver Async to 3.5.0 [JAVARX-39](https://jira.mongodb.org/browse/JAVARX-39)
   * Deprecated AggregatePublisher#useCursor [JAVARX-38](https://jira.mongodb.org/browse/JAVARX-38)
   * Deprecate modifiers in FindPublisher and replace with properties [JAVARX-36](https://jira.mongodb.org/browse/JAVARX-36)
+
+
+---
 
 ### 1.4.0
 
@@ -28,11 +34,15 @@ Changes between released versions
   * Added `MongoClients.getDefaultCodecRegistry()` [JAVARX-23](https://jira.mongodb.org/browse/JAVARX-23)
   * Added a static factory method to MongoClients to taking an already constructed async.client.MongoClient [JAVARX-10](https://jira.mongodb.org/browse/JAVARX-10)
 
+---
+
 ### 1.3.1
 
 [Full change list](https://jira.mongodb.org/issues/?jql=project%20%3D%20JAVARX%20AND%20fixVersion%20%3D%201.3.1)
 
   * Fix bug disallowing requesting zero elements [JAVARX-34](https://jira.mongodb.org/browse/JAVARX-34)
+
+---
 
 ### 1.3
 
@@ -43,6 +53,8 @@ Changes between released versions
   * Added support for views [JAVARX-32](https://jira.mongodb.org/browse/JAVARX-32)
   * Added Collation support [JAVARX-31](https://jira.mongodb.org/browse/JAVARX-31)
   * Added support for extending handshake metadata [JAVARX-29](https://jira.mongodb.org/browse/JAVARX-29)
+
+---
 
 ### 1.2 
 
@@ -55,6 +67,8 @@ Changes between released versions
   * Added `ObservableAdapter` to allow for custom adapters for `Observable`, such as customizing Scheduler threads.
   
   * Ensured that errors caused when requesting data is passed to the `Observer`.
+
+---
 
 ### 1.1 
 
