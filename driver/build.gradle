@@ -21,7 +21,7 @@ archivesBaseName = 'mongodb-driver-rx'
 
 dependencies {
     compile 'org.mongodb:mongodb-driver-async:3.5.0'
-    compile 'io.reactivex:rxjava:1.2.9'
+    compile 'io.reactivex:rxjava:1.3.0'
 }
 
 task uberJar(type: Jar) {
