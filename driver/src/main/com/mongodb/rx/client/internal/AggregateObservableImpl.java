@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import static com.mongodb.assertions.Assertions.notNull;
 import static com.mongodb.rx.client.internal.ObservableHelper.voidToSuccessCallback;
 
+@SuppressWarnings("deprecation")
 class AggregateObservableImpl<TResult> implements AggregateObservable<TResult> {
 
     private final com.mongodb.async.client.AggregateIterable<TResult> wrapped;
