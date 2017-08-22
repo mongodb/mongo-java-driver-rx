@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 
 import static com.mongodb.assertions.Assertions.notNull;
 
+
+@SuppressWarnings("deprecation")
 class FindObservableImpl<TResult> implements FindObservable<TResult> {
 
     private final com.mongodb.async.client.FindIterable<TResult> wrapped;
@@ -127,6 +129,54 @@ class FindObservableImpl<TResult> implements FindObservable<TResult> {
     @Override
     public FindObservable<TResult> collation(final Collation collation) {
         wrapped.collation(collation);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> comment(final String comment) {
+        wrapped.comment(comment);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> hint(final Bson hint) {
+        wrapped.hint(hint);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> max(final Bson max) {
+        wrapped.max(max);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> min(final Bson min) {
+        wrapped.min(min);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> maxScan(final long maxScan) {
+        wrapped.maxScan(maxScan);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> returnKey(final boolean returnKey) {
+        wrapped.returnKey(returnKey);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> showRecordId(final boolean showRecordId) {
+        wrapped.showRecordId(showRecordId);
+        return this;
+    }
+
+    @Override
+    public FindObservable<TResult> snapshot(final boolean snapshot) {
+        wrapped.snapshot(snapshot);
         return this;
     }
 

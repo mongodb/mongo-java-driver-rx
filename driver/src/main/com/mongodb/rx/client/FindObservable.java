@@ -100,7 +100,9 @@ public interface FindObservable<TResult> extends MongoObservable<TResult> {
      * @param modifiers the query modifiers to apply, which may be null.
      * @return this
      * @mongodb.driver.manual reference/operator/query-modifier/ Query Modifiers
+     * @deprecated use the individual setters instead
      */
+    @Deprecated
     FindObservable<TResult> modifiers(Bson modifiers);
 
     /**
@@ -163,4 +165,80 @@ public interface FindObservable<TResult> extends MongoObservable<TResult> {
      * @mongodb.server.release 3.4
      */
     FindObservable<TResult> collation(Collation collation);
+
+    /**
+     * Sets the comment to the query. A null value means no comment is set.
+     *
+     * @param comment the comment
+     * @return this
+     * @since 1.5
+     */
+    FindObservable<TResult> comment(String comment);
+
+    /**
+     * Sets the hint for which index to use. A null value means no hint is set.
+     *
+     * @param hint the hint
+     * @return this
+     * @since 1.5
+     */
+    FindObservable<TResult> hint(Bson hint);
+
+    /**
+     * Sets the exclusive upper bound for a specific index. A null value means no max is set.
+     *
+     * @param max the max
+     * @return this
+     * @since 1.5
+     */
+    FindObservable<TResult> max(Bson max);
+
+    /**
+     * Sets the minimum inclusive lower bound for a specific index. A null value means no max is set.
+     *
+     * @param min the min
+     * @return this
+     * @since 1.5
+     */
+    FindObservable<TResult> min(Bson min);
+
+    /**
+     * Sets the maximum number of documents or index keys to scan when executing the query.
+     *
+     * A zero value or less will be ignored, and indicates that the driver should respect the server's default value.
+     *
+     * @param maxScan the maxScan
+     * @return this
+     * @since 1.5
+     */
+    FindObservable<TResult> maxScan(long maxScan);
+
+    /**
+     * Sets the returnKey. If true the find operation will return only the index keys in the resulting documents.
+     *
+     * @param returnKey the returnKey
+     * @return this
+     * @since 1.5
+     */
+    FindObservable<TResult> returnKey(boolean returnKey);
+
+    /**
+     * Sets the showRecordId. Set to true to add a field {@code $recordId} to the returned documents.
+     *
+     * @param showRecordId the showRecordId
+     * @return this
+     * @since 1.5
+     */
+    FindObservable<TResult> showRecordId(boolean showRecordId);
+
+    /**
+     * Sets the snapshot.
+     *
+     * If true it prevents the cursor from returning a document more than once because of an intervening write operation.
+     *
+     * @param snapshot the snapshot
+     * @return this
+     * @since 1.5
+     */
+    FindObservable<TResult> snapshot(boolean snapshot);
 }

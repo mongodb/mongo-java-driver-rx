@@ -16,6 +16,7 @@ Changes between released versions
   * Updated RxJava to 1.3.0 [JAVARX-40](https://jira.mongodb.org/browse/JAVARX-40)
   * Updated MongoDB Driver Async to 3.5.0 [JAVARX-39](https://jira.mongodb.org/browse/JAVARX-39)
   * Deprecated AggregatePublisher#useCursor [JAVARX-38](https://jira.mongodb.org/browse/JAVARX-38)
+  * Deprecate modifiers in FindPublisher and replace with properties [JAVARX-36](https://jira.mongodb.org/browse/JAVARX-36)
 
 ### 1.4.0
 
