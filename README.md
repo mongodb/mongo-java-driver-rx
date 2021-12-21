@@ -1,13 +1,12 @@
-## MongoDB RxJava Driver ##
+# End of Life Notice
 
-## EOL Notice
-
-The MongoDB RxJava Driver is now officially end-of-life (EOL). No further developments, bugfixes, enhancements, javadoc changes, maintenance will be provided by this project.
+The MongoDB RxJava Driver is now officially end-of-life (EOL). No further development, bugfixes, enhancements, documentation changes or maintenance will be provided by this project and pull requests will no longer be accepted.
 
 Users are encouraged to migrate to the [MongoDB Reactive Streams Java Driver](http://mongodb.github.io/mongo-java-driver-reactivestreams/).
 
 ------------------------
 
+## About
 
 An implementation of the MongoDB Driver providing support for [ReactiveX (Reactive Extensions)](http://reactivex.io/). 
 
