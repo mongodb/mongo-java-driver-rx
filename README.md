@@ -2,7 +2,7 @@
 
 The MongoDB RxJava Driver is now officially end-of-life (EOL). No further development, bugfixes, enhancements, documentation changes or maintenance will be provided by this project and pull requests will no longer be accepted.
 
-Users are encouraged to migrate to the [MongoDB Reactive Streams Java Driver](http://mongodb.github.io/mongo-java-driver-reactivestreams/).
+Users are encouraged to migrate to the [MongoDB Reactive Streams Java Driver](https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-reactivestreams). Documentation for the Reactive Streams driver can be found [here](https://www.mongodb.com/docs/languages/java/reactive-streams-driver/current/).
 
 ------------------------
 
